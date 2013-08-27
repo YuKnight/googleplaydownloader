@@ -13,6 +13,7 @@ You should have received a copy of the GNU Affero General Public License along w
 import wx, platform, os, sys, thread
 from wx.lib.mixins.listctrl import ListCtrlAutoWidthMixin
 import wx.lib.hyperlink as hl
+import webbrowser
 
 try :
   os.chdir(os.path.dirname(sys.argv[0])) #Go to current folder
@@ -25,8 +26,14 @@ from ext_libs.googleplay_api.googleplay import GooglePlayAPI #GooglePlayAPI
 from ext_libs.googleplay_api.googleplay import LoginError
 from ext_libs.androguard.core.bytecodes import apk as androguard_apk #Androguard
 
+
+config = {"download_folder_path" : os.path.join(os.getcwd(),"apk_downloaded")}
+
 #default credentials
-config = {"download_folder_path" : os.path.join(os.getcwd(),"apk_downloaded"), "language" : "fr_FR", "android_ID" : "32AA74CDC05B26A9" , "gmail_address" : "tefuhkog@gmail.com", "gmail_password" : "tyuiop65"}    
+config["android_ID"] = "3d977c17fb909657"
+config["gmail_password"] = "vbwdbdfbbrfdfbwdfb"
+config["gmail_address"] = "bhbvfjfrddddgdfgd@gmail.com"
+config["language"] = "fr_FR"
   
 def sizeof_fmt(num):
   for x in ['bytes','KB','MB','GB','TB']:
@@ -37,9 +44,11 @@ def sizeof_fmt(num):
 #List autoresize
 class AutoWidthListCtrl(wx.ListCtrl, ListCtrlAutoWidthMixin):
   def __init__(self, parent, ID, style):
-    thestyle = style
-    wx.ListCtrl.__init__(self, parent, ID, style=thestyle)
+    self.parent = parent
+    wx.ListCtrl.__init__(self, parent, ID, style=style)
     ListCtrlAutoWidthMixin.__init__(self)
+    
+    self.Bind(wx.EVT_LIST_ITEM_ACTIVATED, self.OnItemActivated)
   
   def autoresize(self):
     for i in range(self.GetColumnCount()):
@@ -57,6 +66,11 @@ class AutoWidthListCtrl(wx.ListCtrl, ListCtrlAutoWidthMixin):
   def fill_headers(self, headers):
     for i, header in enumerate(headers):
       self.InsertColumn(i, u"%s" % header)
+      
+  def OnItemActivated(self, event):
+    selected_item = event.m_itemIndex
+    packagename = self.data[self.GetItemData(selected_item)]
+    view_webpage(packagename)
       
     
 def analyse_local_apks(list_of_apks, playstore_api, download_folder_path, dlg, return_function):
@@ -124,9 +138,13 @@ def softwareID(query) :
   if query == "name":
     return u"Google Play Downloader"
   if query == "version":
-    return u"0.2beta"
+    return u"0.2"
   if query == "copyright":
     return u"Tuxicoman"
+    
+def view_webpage(packagename):
+  url = "https://play.google.com/store/apps/details?id=%s" % packagename
+  webbrowser.open(url)
 
 class MainPanel(wx.Panel):
   def __init__(self, parent):
@@ -144,8 +162,8 @@ class MainPanel(wx.Panel):
     searchbox.Add(search_entry, 0, wx.EXPAND|wx.ADJUST_MINSIZE)
     
     #Config
-    config_title = wx.StaticText(self, -1, u"Config :")
-    config_button = wx.Button(self, -1, "Modify")
+    config_title = wx.StaticText(self, -1, u"Settings :")
+    config_button = wx.Button(self, -1, "Configure")
     self.Bind(wx.EVT_BUTTON, lambda e: self.show_config(), config_button)
     
     #Config layout
@@ -164,6 +182,7 @@ class MainPanel(wx.Panel):
       "Price",
       "Rating",
       "Num Downloads",
+      "AppID"
       ]
           
     results_list.fill_headers(results_list.headers)
@@ -175,8 +194,11 @@ class MainPanel(wx.Panel):
     resultsbox.Add(results_list, 1, wx.EXPAND|wx.ADJUST_MINSIZE)
 
     
-    #Buttons    
-    self.download_button = wx.Button(self, -1, "Download APK(s) selected")
+    #Buttons
+    self.webpage_button = wx.Button(self, -1, "View APK(s) info on the web")
+    self.webpage_button.Disable()
+    self.Bind(wx.EVT_BUTTON, lambda e: self.view_webpage_selection(results_list), self.webpage_button)
+    self.download_button = wx.Button(self, -1, "Download selected APK(s)")
     self.download_button.Disable()
     self.Bind(wx.EVT_BUTTON, lambda e: self.prepare_download_selection(results_list), self.download_button)
     self.update_button = wx.Button(self, -1, "Search updates for local APK(s)")
@@ -184,6 +206,7 @@ class MainPanel(wx.Panel):
     
     #Buttons layout
     buttonsbox = wx.BoxSizer(wx.HORIZONTAL)
+    buttonsbox.Add(self.webpage_button, 1, wx.ALIGN_LEFT|wx.TOP,  border=3)
     buttonsbox.Add(self.download_button, 1, wx.ALIGN_LEFT|wx.TOP,  border=3)
     buttonsbox.Add(self.update_button, 1, wx.ALIGN_RIGHT|wx.TOP,  border=3)
     
@@ -195,7 +218,7 @@ class MainPanel(wx.Panel):
     bigbox = wx.BoxSizer(wx.VERTICAL)
     topbox = wx.BoxSizer(wx.HORIZONTAL)
     topbox.Add(searchbox, 1, wx.EXPAND|wx.ADJUST_MINSIZE)
-    topbox.Add(configbox, 0, wx.EXPAND|wx.ADJUST_MINSIZE|wx.LEFT, border=3)
+    topbox.Add(configbox, 0, wx.EXPAND|wx.ADJUST_MINSIZE|wx.LEFT, border=5)
     bigbox.Add(topbox, 0, wx.EXPAND|wx.ADJUST_MINSIZE)
     bigbox.Add(resultsbox, 1, wx.EXPAND|wx.ADJUST_MINSIZE)
     bigbox.Add(buttonsbox, 0, wx.EXPAND|wx.ADJUST_MINSIZE)
@@ -243,7 +266,8 @@ class MainPanel(wx.Panel):
             result.details.appDetails.versionCode,
             result.offer[0].formattedAmount,
             "%.2f" % result.aggregateRating.starRating,
-            result.details.appDetails.numDownloads]
+            result.details.appDetails.numDownloads,
+            result.docid]
                 
       item = results_list.InsertStringItem(i, "")
       for j, text in enumerate(l):
@@ -265,8 +289,10 @@ class MainPanel(wx.Panel):
     #Disable button if there is no result
     if results_list.GetFirstSelected() != -1:
       self.download_button.Enable()
+      self.webpage_button.Enable()
     else:
       self.download_button.Disable()
+      self.webpage_button.Enable()
       
   def show_config(self):
     #Popup Config dialog
@@ -287,7 +313,16 @@ class MainPanel(wx.Panel):
     #Connect to GooglePlay
     self.connect_to_googleplay_api()
     
-    
+  def view_webpage_selection(self, results_list):
+    #Get list of packages selected
+    list_of_packages = []
+    selected_item = results_list.GetFirstSelected()
+    while selected_item != -1 :
+      packagename = results_list.data[results_list.GetItemData(selected_item)]
+      list_of_packages.append(packagename)
+      selected_item = results_list.GetNextSelected(selected_item)
+    for packagename in list_of_packages:
+      view_webpage(packagename)
     
   def after_download(self, failed_downloads):
     #Info message
@@ -378,9 +413,9 @@ class MainPanel(wx.Panel):
 
 class ConfigDialog(wx.Dialog):
   def __init__(self, parent):
-    wx.Dialog.__init__(self, parent=parent, title="Config")
+    wx.Dialog.__init__(self, parent=parent, title="Configure Settings")
     
-    text_size = 200
+    text_size = 250
     sizer = wx.BoxSizer(wx.VERTICAL)
     gridSizer = wx.FlexGridSizer(rows=4, cols=2, hgap=5, vgap=5)
     sizer.Add(gridSizer, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
