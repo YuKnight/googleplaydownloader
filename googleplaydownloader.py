@@ -138,7 +138,7 @@ def softwareID(query) :
   if query == "name":
     return u"Google Play Downloader"
   if query == "version":
-    return u"0.2"
+    return u"0.3b"
   if query == "copyright":
     return u"Tuxicoman"
     
@@ -192,7 +192,6 @@ class MainPanel(wx.Panel):
     resultsbox = wx.BoxSizer(wx.VERTICAL)
     resultsbox.Add(results_title)
     resultsbox.Add(results_list, 1, wx.EXPAND|wx.ADJUST_MINSIZE)
-
     
     #Buttons
     self.webpage_button = wx.Button(self, -1, "View APK(s) info on the web")
@@ -201,14 +200,23 @@ class MainPanel(wx.Panel):
     self.download_button = wx.Button(self, -1, "Download selected APK(s)")
     self.download_button.Disable()
     self.Bind(wx.EVT_BUTTON, lambda e: self.prepare_download_selection(results_list), self.download_button)
-    self.update_button = wx.Button(self, -1, "Search updates for local APK(s)")
-    self.Bind(wx.EVT_BUTTON, self.prepare_analyse_apks, self.update_button )
+
     
     #Buttons layout
     buttonsbox = wx.BoxSizer(wx.HORIZONTAL)
     buttonsbox.Add(self.webpage_button, 1, wx.ALIGN_LEFT|wx.TOP,  border=3)
     buttonsbox.Add(self.download_button, 1, wx.ALIGN_LEFT|wx.TOP,  border=3)
-    buttonsbox.Add(self.update_button, 1, wx.ALIGN_RIGHT|wx.TOP,  border=3)
+    
+    #Update
+    #update_title = wx.StaticText(self, -1, u"Update :")
+    self.update_button = wx.Button(self, -1, "Search updates for local APK(s)")
+    self.Bind(wx.EVT_BUTTON, self.prepare_analyse_apks, self.update_button )
+    
+    #Update layout
+    updatebox = wx.BoxSizer(wx.VERTICAL)
+    #updatebox.Add(update_title)
+    updatebox.Add(self.update_button, 0, wx.EXPAND|wx.TOP,  border=3)
+
     
     #Credits
     creditsbox = wx.BoxSizer(wx.HORIZONTAL)
@@ -222,11 +230,12 @@ class MainPanel(wx.Panel):
     bigbox.Add(topbox, 0, wx.EXPAND|wx.ADJUST_MINSIZE)
     bigbox.Add(resultsbox, 1, wx.EXPAND|wx.ADJUST_MINSIZE)
     bigbox.Add(buttonsbox, 0, wx.EXPAND|wx.ADJUST_MINSIZE)
+    bigbox.Add(updatebox, 0, wx.EXPAND|wx.ADJUST_MINSIZE)
     bigbox.Add(creditsbox, 0)
 
     
     self.SetSizer(bigbox)
-    self.SetMinSize((700,300))
+    self.SetMinSize((700,400))
     search_entry.SetFocus()
 
     
