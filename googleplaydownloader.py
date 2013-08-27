@@ -3,7 +3,7 @@
 
 """
 GooglePlayDownloader
-Copyright (C) 2013   Erwan JACQ
+Copyright (C) 2013   Tuxicoman
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more details.
@@ -22,22 +22,11 @@ except: pass
 ext_libs_path = os.path.join(os.getcwd(), "ext_libs")
 sys.path.append(ext_libs_path)
 from ext_libs.googleplay_api.googleplay import GooglePlayAPI #GooglePlayAPI
+from ext_libs.googleplay_api.googleplay import LoginError
 from ext_libs.androguard.core.bytecodes import apk as androguard_apk #Androguard
 
-
-config = {"download_folder_path" : os.path.join(os.getcwd(),"apk_downloaded")}
-
-def get_googleplay_api():
-  #default credentials
-  LANG            = "fr_FR"
-  ANDROID_ID      = "32AA74CDC05B26A9" 
-  GOOGLE_LOGIN    = "tefuhkog@gmail.com"
-  GOOGLE_PASSWORD = "tyuiop65"
-  AUTH_TOKEN = None
-
-  api = GooglePlayAPI(androidId=ANDROID_ID, lang=LANG)
-  api.login(GOOGLE_LOGIN, GOOGLE_PASSWORD, AUTH_TOKEN)
-  return api
+#default credentials
+config = {"download_folder_path" : os.path.join(os.getcwd(),"apk_downloaded"), "language" : "fr_FR", "android_ID" : "32AA74CDC05B26A9" , "gmail_address" : "tefuhkog@gmail.com", "gmail_password" : "tyuiop65"}    
   
 def sizeof_fmt(num):
   for x in ['bytes','KB','MB','GB','TB']:
@@ -135,14 +124,13 @@ def softwareID(query) :
   if query == "name":
     return u"Google Play Downloader"
   if query == "version":
-    return u"0.1"
+    return u"0.2beta"
   if query == "copyright":
     return u"Tuxicoman"
 
 class MainPanel(wx.Panel):
   def __init__(self, parent):
     wx.Panel.__init__(self, parent, -1)
-    self.playstore_api = parent.application.playstore_api
 
     #Search
     search_title = wx.StaticText(self, -1, u"Search :")
@@ -154,6 +142,16 @@ class MainPanel(wx.Panel):
     searchbox = wx.BoxSizer(wx.VERTICAL)
     searchbox.Add(search_title)
     searchbox.Add(search_entry, 0, wx.EXPAND|wx.ADJUST_MINSIZE)
+    
+    #Config
+    config_title = wx.StaticText(self, -1, u"Config :")
+    config_button = wx.Button(self, -1, "Modify")
+    self.Bind(wx.EVT_BUTTON, lambda e: self.show_config(), config_button)
+    
+    #Config layout
+    configbox = wx.BoxSizer(wx.VERTICAL)
+    configbox.Add(config_title)
+    configbox.Add(config_button)
     
     #Results
     results_title = wx.StaticText(self, -1, u"Results :")
@@ -177,7 +175,7 @@ class MainPanel(wx.Panel):
     resultsbox.Add(results_list, 1, wx.EXPAND|wx.ADJUST_MINSIZE)
 
     
-    #Buttons
+    #Buttons    
     self.download_button = wx.Button(self, -1, "Download APK(s) selected")
     self.download_button.Disable()
     self.Bind(wx.EVT_BUTTON, lambda e: self.prepare_download_selection(results_list), self.download_button)
@@ -195,7 +193,10 @@ class MainPanel(wx.Panel):
   
     #Layout
     bigbox = wx.BoxSizer(wx.VERTICAL)
-    bigbox.Add(searchbox, 0, wx.EXPAND|wx.ADJUST_MINSIZE)
+    topbox = wx.BoxSizer(wx.HORIZONTAL)
+    topbox.Add(searchbox, 1, wx.EXPAND|wx.ADJUST_MINSIZE)
+    topbox.Add(configbox, 0, wx.EXPAND|wx.ADJUST_MINSIZE|wx.LEFT, border=3)
+    bigbox.Add(topbox, 0, wx.EXPAND|wx.ADJUST_MINSIZE)
     bigbox.Add(resultsbox, 1, wx.EXPAND|wx.ADJUST_MINSIZE)
     bigbox.Add(buttonsbox, 0, wx.EXPAND|wx.ADJUST_MINSIZE)
     bigbox.Add(creditsbox, 0)
@@ -204,9 +205,10 @@ class MainPanel(wx.Panel):
     self.SetSizer(bigbox)
     self.SetMinSize((700,300))
     search_entry.SetFocus()
+
     
   def prepare_analyse_apks(self, event):
-    if True:#self.ask_download_folder_path() == True:
+    if self.ask_download_folder_path() == True:
       download_folder_path = config["download_folder_path"]
       list_of_apks = [filename for filename in os.listdir(download_folder_path) if os.path.splitext(filename)[1] == ".apk"]
       dlg = wx.ProgressDialog("Updating APKs",
@@ -266,6 +268,27 @@ class MainPanel(wx.Panel):
     else:
       self.download_button.Disable()
       
+  def show_config(self):
+    #Popup Config dialog
+    dlg = ConfigDialog(self)
+    dlg.CenterOnScreen()
+    
+    val = dlg.ShowModal()
+    
+    if val == wx.ID_OK:
+      #Get data
+      config["language"] = dlg.language.GetValue()
+      config["android_ID"] = dlg.android_ID.GetValue()
+      config["gmail_address"] = dlg.gmail_address.GetValue()
+      config["gmail_password"] = dlg.gmail_password.GetValue()
+
+    dlg.Destroy()
+    
+    #Connect to GooglePlay
+    self.connect_to_googleplay_api()
+    
+    
+    
   def after_download(self, failed_downloads):
     #Info message
     if len(failed_downloads) == 0 :
@@ -293,6 +316,20 @@ class MainPanel(wx.Panel):
       return True
     else:
       return False
+      
+  def connect_to_googleplay_api(self):
+    AUTH_TOKEN = None
+
+    api = GooglePlayAPI(androidId=config["android_ID"], lang=config["language"])
+    try :
+      api.login(config["gmail_address"], config["gmail_password"], AUTH_TOKEN)
+    except LoginError, exc:
+      print exc.value
+      dlg = wx.MessageDialog(self, "%s" % exc.value,'Connection to Play store failed', wx.OK | wx.ICON_INFORMATION)
+      dlg.ShowModal()
+      dlg.Destroy()
+    else:   
+      self.playstore_api = api
     
   def prepare_download_selection(self, results_list):
     #Get list of packages selected
@@ -339,7 +376,56 @@ class MainPanel(wx.Panel):
                                  )
         thread.start_new_thread(download_selection, (self.playstore_api, list_of_packages_to_download, dlg, self.after_download))
 
+class ConfigDialog(wx.Dialog):
+  def __init__(self, parent):
+    wx.Dialog.__init__(self, parent=parent, title="Config")
     
+    text_size = 200
+    sizer = wx.BoxSizer(wx.VERTICAL)
+    gridSizer = wx.FlexGridSizer(rows=4, cols=2, hgap=5, vgap=5)
+    sizer.Add(gridSizer, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
+    
+    label = wx.StaticText(self, -1, "Gmail address:")
+    self.gmail_address = wx.TextCtrl(self, -1, "", size=(text_size,-1))
+    gridSizer.Add(label,0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT,5)
+    gridSizer.Add(self.gmail_address,1, wx.EXPAND|wx.ALIGN_CENTRE|wx.ALL, 5)
+    
+    label = wx.StaticText(self, -1, "Gmail password:")
+    self.gmail_password = wx.TextCtrl(self, -1, "", size=(text_size,-1))
+    gridSizer.Add(label,0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT,5)
+    gridSizer.Add(self.gmail_password,1, wx.EXPAND|wx.ALIGN_CENTRE|wx.ALL, 5)
+    
+    label = wx.StaticText(self, -1, "Android ID:")
+    self.android_ID = wx.TextCtrl(self, -1, "", size=(text_size,-1))
+    gridSizer.Add(label,0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT,5)
+    gridSizer.Add(self.android_ID,1, wx.EXPAND|wx.ALIGN_CENTRE|wx.ALL, 5)
+    
+    label = wx.StaticText(self, -1, "Language:")
+    self.language = wx.TextCtrl(self, -1, "", size=(text_size,-1))
+    gridSizer.Add(label,0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT,5)
+    gridSizer.Add(self.language,1, wx.EXPAND|wx.ALIGN_CENTRE|wx.ALL, 5)
+
+    line = wx.StaticLine(self, -1, size=(20,-1), style=wx.LI_HORIZONTAL)
+    sizer.Add(line, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT|wx.TOP, 5)
+        
+    btnsizer = wx.StdDialogButtonSizer()
+    btn = wx.Button(self, wx.ID_OK)
+    btn.SetDefault()
+    btnsizer.AddButton(btn)
+    btnsizer.Realize()
+    sizer.Add(btnsizer, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
+        
+    self.SetSizer(sizer)
+    sizer.Fit(self)
+    
+    #Fill data
+    self.language.SetValue(config["language"])
+    self.android_ID.SetValue(config["android_ID"])
+    self.gmail_address.SetValue(config["gmail_address"])
+    self.gmail_password.SetValue(config["gmail_password"])
+    
+  
+  
 class MainFrame(wx.Frame):      
 
   def __init__(self, parent, title):
@@ -354,12 +440,11 @@ class MainFrame(wx.Frame):
     self.SetSizer(self.sizer)
     self.Fit()
     self.CenterOnScreen()
+    
+    self.panel.connect_to_googleplay_api()
 
 class App(wx.App):
-  def OnInit(self):
-    #Connect to GooglePlay
-    self.playstore_api = get_googleplay_api()
-  
+  def OnInit(self):  
     title=u"%s %s" % (softwareID("name"), softwareID("version"))
     self.SetAppName(softwareID("name"))
     fen = MainFrame(self, title)  
