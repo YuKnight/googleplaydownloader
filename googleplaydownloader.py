@@ -143,7 +143,8 @@ def softwareID(query) :
     return u"Tuxicoman"
     
 def view_webpage(packagename):
-  url = "https://play.google.com/store/apps/details?id=%s" % packagename
+  language_code  = config["language"].split("_")[0]
+  url = "https://play.google.com/store/apps/details?id=%s&hl=%s" % (packagename,language_code)
   webbrowser.open(url)
 
 class MainPanel(wx.Panel):
