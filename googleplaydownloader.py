@@ -138,7 +138,7 @@ def softwareID(query) :
   if query == "name":
     return u"Google Play Downloader"
   if query == "version":
-    return u"0.3b"
+    return u"0.3"
   if query == "copyright":
     return u"Tuxicoman"
     
