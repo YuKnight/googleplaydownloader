@@ -11,6 +11,7 @@ The GUI (googleplaydownloader.py) is under AGPL licence (copyright Tuxicoman)
 
 Dependencies are:
 - protobuf for messages exchanges with Google PlayStore
+- python-requests
 - wxpython for the GUI
 - python 2.5+
 
