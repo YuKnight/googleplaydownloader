@@ -30,9 +30,9 @@ from ext_libs.androguard.core.bytecodes import apk as androguard_apk #Androguard
 config = {"download_folder_path" : os.path.join(os.getcwd(),"apk_downloaded")}
 
 #default credentials
-config["android_ID"] = "3d977c17fb909657"
-config["gmail_password"] = "vbwdbdfbbrfdfbwdfb"
-config["gmail_address"] = "bhbvfjfrddddgdfgd@gmail.com"
+config["android_ID"] = "3d9edf36b9b11f59"
+config["gmail_password"] = "lala123456"
+config["gmail_address"] = "jeanlatune@gmail.com"
 config["language"] = "fr_FR"
   
 def sizeof_fmt(num):
