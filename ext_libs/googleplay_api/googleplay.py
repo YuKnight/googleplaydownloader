@@ -134,7 +134,8 @@ class GooglePlayAPI(object):
             elif "error" in params:
                 raise LoginError("server says: " + params["error"])
             else:
-
+                raise LoginError("Auth token not found.")
+                
     def executeRequestApi2(self, path, datapost=None, post_content_type="application/x-www-form-urlencoded; charset=UTF-8"):
         if (datapost is None and path in self.preFetch):
             data = self.preFetch[path]
