@@ -127,14 +127,13 @@ class GooglePlayAPI(object):
             params = {}
             for d in data:
                 if not "=" in d: continue
-                k, v = d.split("=")
+                k, v = d.split("=")[0:2]
                 params[k.strip().lower()] = v.strip()
             if "auth" in params:
                 self.setAuthSubToken(params["auth"])
             elif "error" in params:
                 raise LoginError("server says: " + params["error"])
             else:
-                raise LoginError("Auth token not found.")
 
     def executeRequestApi2(self, path, datapost=None, post_content_type="application/x-www-form-urlencoded; charset=UTF-8"):
         if (datapost is None and path in self.preFetch):
