@@ -5,6 +5,7 @@ I ever wanted to get applications from the Google Play store but didn't like my 
 The software is based on :
 - googleplay-api to interact with Google PlayStore (https://github.com/egirault/googleplay-api/) BSD license
 - androguard to read info info from local APKs on disk (http://code.google.com/p/androguard/) LGPL license
+- android-checkin-1.0.jar to create AndroiID from Google credentials. (https://github.com/nviennot/android-checkin/) MIT license
 These libs are packaged in the ext_libs folder for user convenience but are not part of this project.
 
 The GUI (googleplaydownloader.py) is under AGPL licence (copyright Tuxicoman)
