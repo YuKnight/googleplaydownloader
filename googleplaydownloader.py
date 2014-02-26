@@ -221,7 +221,7 @@ class MainPanel(wx.Panel):
     
     #Credits
     creditsbox = wx.BoxSizer(wx.HORIZONTAL)
-    creditsbox.AddMany([wx.StaticText(self, -1, u"Credits : "), hl.HyperLinkCtrl(self, wx.ID_ANY, u"Tuxicoman", URL="http://tuxicoman.jesuislibre.net"), wx.StaticText(self, -1, u" / GooglePlay unofficial API : "), hl.HyperLinkCtrl(self, wx.ID_ANY, u"Emilien Girault", URL="http://www.segmentationfault.fr")])
+    creditsbox.AddMany([wx.StaticText(self, -1, u"Credits : "), hl.HyperLinkCtrl(self, wx.ID_ANY, u"Tuxicoman", URL="http://tuxicoman.jesuislibre.net"), wx.StaticText(self, -1, u" / GooglePlay unofficial API : "), hl.HyperLinkCtrl(self, wx.ID_ANY, u"Emilien Girault", URL="http://www.segmentationfault.fr"), wx.StaticText(self, -1, u" / AndroidID generation : "), hl.HyperLinkCtrl(self, wx.ID_ANY, u"Nicolas Viennot", URL="https://github.com/nviennot/android-checkin")])
   
     #Layout
     bigbox = wx.BoxSizer(wx.VERTICAL)
