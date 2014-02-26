@@ -14,6 +14,10 @@ Dependencies are:
 - python-requests
 - wxpython for the GUI
 - python 2.5+
+- java (optional but needed for autogeneration of a new AndroiID)
+
+You can install them through your package manager. For example on Debian :
+# apt-get install python-protobuf python-wxgtk2.8 python-requests java-common
 
 To launch the software, just do :
 $ python googleplaydownloader.py

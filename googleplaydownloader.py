@@ -10,7 +10,7 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import wx, platform, os, sys, thread
+import wx, platform, os, sys, thread, subprocess
 from wx.lib.mixins.listctrl import ListCtrlAutoWidthMixin
 import wx.lib.hyperlink as hl
 import webbrowser
@@ -30,9 +30,9 @@ from ext_libs.androguard.core.bytecodes import apk as androguard_apk #Androguard
 config = {"download_folder_path" : os.path.join(os.getcwd(),"apk_downloaded")}
 
 #default credentials
-config["android_ID"] = "3d9edf36b9b11f59"
-config["gmail_password"] = "lala123456"
-config["gmail_address"] = "jeanlatune@gmail.com"
+config["android_ID"] = "34ec9a6143df5767"
+config["gmail_password"] = "lala123456789"
+config["gmail_address"] = "googleplay@jesuislibre.net"
 config["language"] = "fr_FR"
   
 def sizeof_fmt(num):
@@ -138,7 +138,7 @@ def softwareID(query) :
   if query == "name":
     return u"Google Play Downloader"
   if query == "version":
-    return u"0.4"
+    return u"0.5"
   if query == "copyright":
     return u"Tuxicoman"
     
@@ -317,11 +317,27 @@ class MainPanel(wx.Panel):
       config["android_ID"] = dlg.android_ID.GetValue()
       config["gmail_address"] = dlg.gmail_address.GetValue()
       config["gmail_password"] = dlg.gmail_password.GetValue()
-
+      
     dlg.Destroy()
     
-    #Connect to GooglePlay
-    self.connect_to_googleplay_api()
+    if config["android_ID"] == "" :
+      #Launch Java to create an AndroidID
+      p = subprocess.Popen(["java","-jar", "android-checkin-1.0.jar", "%s" % config["gmail_address"], "%s" % config["gmail_password"]], stdout = subprocess.PIPE, stderr=subprocess.PIPE)
+      r = p.stderr.readlines()
+      androidid_pattern = "AndroidId: "
+      if len(r) == 10 and r[9].find(androidid_pattern) != -1 and r[9].find("\n") != -1:
+        config["android_ID"] = r[9][len(androidid_pattern):r[9].find("\n")]
+        message = "sucessful"
+      else:
+        #Autogeneration of AndroidID failed
+        message = "failed"
+      dlg = wx.MessageDialog(self, "Autogeneration of AndroidID %s" % message,'Autogeneration of AndroidID %s' % message, wx.OK | wx.ICON_INFORMATION)
+      dlg.ShowModal()
+      dlg.Destroy()
+        
+    if config["android_ID"] != "" :
+      #Connect to GooglePlay
+      self.connect_to_googleplay_api()
     
   def view_webpage_selection(self, results_list):
     #Get list of packages selected
@@ -440,7 +456,7 @@ class ConfigDialog(wx.Dialog):
     gridSizer.Add(label,0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT,5)
     gridSizer.Add(self.gmail_password,1, wx.EXPAND|wx.ALIGN_CENTRE|wx.ALL, 5)
     
-    label = wx.StaticText(self, -1, "Android ID:")
+    label = wx.StaticText(self, -1, "Android ID:\n(leave blank to autogenerate.\nautogeneration requires Java installed)")
     self.android_ID = wx.TextCtrl(self, -1, "", size=(text_size,-1))
     gridSizer.Add(label,0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT,5)
     gridSizer.Add(self.android_ID,1, wx.EXPAND|wx.ALIGN_CENTRE|wx.ALL, 5)
