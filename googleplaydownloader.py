@@ -120,7 +120,7 @@ def download_selection(playstore_api, list_of_packages_to_download, dlg, return_
     # Download
     try:
       data = playstore_api.download(packagename, vc)
-    except Exception, exc:
+    except Exception as exc:
       print "Error while downloading %s : %s" % (packagename, exc)
       failed_downloads.append(item)
     else:
