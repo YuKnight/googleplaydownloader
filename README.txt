@@ -27,10 +27,13 @@ The GUI (googleplaydownloader.py) is under AGPL licence (copyright Tuxicoman)
 
 2# method : debian package
 
-  Build a debian package 
+  Build a debian package (you can also download the prebuild .deb from the website)
   $ build_debian_pachage.sh
 
   Install it
-  $ dpkg -i googleplaydownloader.deb
+  # dpkg -i googleplaydownloader.deb
+  
+  Solve packages dependencies
+  # apt-get install -f
 
 Enjoy !
