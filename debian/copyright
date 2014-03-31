@@ -1,0 +1,43 @@
+This work was packaged for Debian by:
+
+    Tuxicoman <debian@jesuislibre.net> on Tue, 25 March 2014 16:28:13 +0200
+
+It was downloaded from:
+
+    <url://example.com>
+
+Upstream Author(s):
+
+    <put author's name and email here>
+    <likewise for another author>
+
+Copyright:
+
+    <Copyright (C) YYYY Firstname Lastname>
+    <likewise for another author>
+
+License:
+
+    <Put the license of the package here indented by 4 spaces>
+
+The Debian packaging is:
+
+    Copyright (C) 2014 Tuxicoman <debian@jesuislibre.net>
+
+# Please chose a license for your packaging work. If the program you package
+# uses a mainstream license, using the same license is the safest choice.
+# Please avoid to pick license terms that are more restrictive than the
+# packaged work, as it may make Debian's contributions unacceptable upstream.
+# If you just want it to be GPL version 3, leave the following lines in.
+
+and is licensed under the AGPL version 3,
+see "/usr/share/common-licenses/AGPL-3".
+
+# Please also look if there are files or directories which have a
+# different copyright/license attached and list them here.
+
+The software is based on :
+- googleplay-api to interact with Google PlayStore (https://github.com/egirault/googleplay-api/) BSD license
+- androguard to read info info from local APKs on disk (http://code.google.com/p/androguard/) LGPL license
+- android-checkin-1.0.jar to create AndroiID from Google credentials. (https://github.com/nviennot/android-checkin/) MIT license
+These libs are packaged in the src/ext_libs folder for user convenience but are not part of this project.

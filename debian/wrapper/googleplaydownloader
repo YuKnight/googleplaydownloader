@@ -1,0 +1,3 @@
+#!/usr/bin/env sh
+
+python /usr/share/pyshared/googleplaydownloader/googleplaydownloader.py

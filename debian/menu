@@ -1,0 +1,3 @@
+?package(googleplaydownloader):needs="X11|text|vc|wm" section="Applications"\
+  title="GooglePlayDownloader" command="/usr/bin/googleplaydownloader"\
+  icon="usr/share/pixmaps/googleplaydownloader.xpm"

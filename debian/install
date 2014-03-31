@@ -1,0 +1,3 @@
+debian/wrapper/googleplaydownloader	usr/bin
+debian/googleplaydownloader.xpm	usr/share/pixmaps
+debian/googleplaydownloader.desktop	usr/share/applications

@@ -15,11 +15,13 @@ from wx.lib.mixins.listctrl import ListCtrlAutoWidthMixin
 import wx.lib.hyperlink as hl
 import webbrowser
 
-try :
-  os.chdir(os.path.dirname(sys.argv[0])) #Go to current folder
-except: pass
+#Go to source folder
+current_path = os.path.dirname(__file__)
+if current_path != "":
+  os.chdir(current_path) 
 
 #Import external libs
+print os.getcwd()
 ext_libs_path = os.path.join(os.getcwd(), "ext_libs")
 sys.path.append(ext_libs_path)
 from ext_libs.googleplay_api.googleplay import GooglePlayAPI #GooglePlayAPI
@@ -514,8 +516,8 @@ class App(wx.App):
     self.SetTopWindow(fen)
     return True
 
-if __name__ == '__main__':
-    
+  
+def main():
   if platform.system() == 'Linux' :
     app = App() 
   else :
@@ -528,3 +530,6 @@ if __name__ == '__main__':
   
   #Launch GUI
   app.MainLoop()
+  
+if __name__ == '__main__':
+  main()
