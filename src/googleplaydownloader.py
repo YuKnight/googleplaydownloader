@@ -10,7 +10,7 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import wx, platform, os, sys, thread, subprocess
+import wx, platform, os, sys, thread, subprocess, ConfigParser
 from wx.lib.mixins.listctrl import ListCtrlAutoWidthMixin
 import wx.lib.hyperlink as hl
 import webbrowser
@@ -21,21 +21,41 @@ if current_path != "":
   os.chdir(current_path) 
 
 #Import external libs
-print os.getcwd()
 ext_libs_path = os.path.join(os.getcwd(), "ext_libs")
 sys.path.append(ext_libs_path)
 from ext_libs.googleplay_api.googleplay import GooglePlayAPI #GooglePlayAPI
 from ext_libs.googleplay_api.googleplay import LoginError
 from ext_libs.androguard.core.bytecodes import apk as androguard_apk #Androguard
 
-
-config = {"download_folder_path" : os.path.join(os.getcwd(),"apk_downloaded")}
-
-#default credentials
+#default config
+config = {}
+config["download_folder_path"] = os.path.expanduser('~')
 config["android_ID"] = "34ec9a6143df5767"
 config["gmail_password"] = "lala123456789"
 config["gmail_address"] = "googleplay@jesuislibre.net"
 config["language"] = "fr_FR"
+
+
+config_file_path = os.path.expanduser('~/.config/googleplaydownloader/googleplaydownloader.conf')
+config_section = "googleplaydownloader"
+
+def read_config(config_file_path, config_dict):
+  configparser = ConfigParser.RawConfigParser()
+  configparser.read(config_file_path)
+  for key in config_dict.keys():
+    if configparser.has_option(config_section, key):
+      config_dict[key] = configparser.get(config_section, key)
+
+def save_config(config_file_path, config_dict):
+  configparser = ConfigParser.RawConfigParser()
+  configparser.add_section(config_section)
+  for key, value in config_dict.items():
+    configparser.set(config_section, key, value)
+    
+  if not os.path.exists(config_file_path) :
+    os.makedirs(os.path.dirname(config_file_path))
+  with open(config_file_path, 'wb') as configfile:
+    configparser.write(configfile)
   
 def sizeof_fmt(num):
   for x in ['bytes','KB','MB','GB','TB']:
@@ -339,7 +359,9 @@ class MainPanel(wx.Panel):
         
     if config["android_ID"] != "" :
       #Connect to GooglePlay
-      self.connect_to_googleplay_api()
+      if self.connect_to_googleplay_api() == True:
+        save_config(config_file_path, config)
+    
     
   def view_webpage_selection(self, results_list):
     #Get list of packages selected
@@ -371,11 +393,12 @@ class MainPanel(wx.Panel):
     dlg.Destroy()
       
   def ask_download_folder_path(self):
-    dlg = wx.DirDialog(self, "Choose a download folder:", style=wx.DD_DEFAULT_STYLE)
+    dlg = wx.DirDialog(self, "Choose a download folder:",  defaultPath = config["download_folder_path"], style=wx.DD_DEFAULT_STYLE)
     return_value = dlg.ShowModal()
     dlg.Destroy()
     if return_value == wx.ID_OK :
       config["download_folder_path"] = dlg.GetPath()
+      save_config(config_file_path, config)
       return True
     else:
       return False
@@ -391,8 +414,12 @@ class MainPanel(wx.Panel):
       dlg = wx.MessageDialog(self, "%s" % exc.value,'Connection to Play store failed', wx.OK | wx.ICON_INFORMATION)
       dlg.ShowModal()
       dlg.Destroy()
+      success = False
     else:   
       self.playstore_api = api
+      success = True
+      
+    return success
     
   def prepare_download_selection(self, results_list):
     #Get list of packages selected
@@ -504,6 +531,8 @@ class MainFrame(wx.Frame):
     self.Fit()
     self.CenterOnScreen()
     
+    #Init 
+    read_config(config_file_path, config)
     self.panel.connect_to_googleplay_api()
 
 class App(wx.App):
