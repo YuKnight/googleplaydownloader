@@ -1,3 +1,9 @@
+googleplaydownloader (1.0-1) unstable; urgency=low
+
+  * add config file to store user preferences
+
+ -- Tuxicoman <debian@jesuislibre.net>  Wed, 2 April 2014 16:28:13 +0200
+
 googleplaydownloader (0.5-1) unstable; urgency=low
 
   * first Debian package

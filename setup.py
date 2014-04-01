@@ -16,10 +16,10 @@ You should have received a copy of the GNU Affero General Public License along w
 from distutils.core import setup
 
 setup(name="googleplaydownloader",
-	version="0.5",
+	version="1.0",
 	description='Google PlayStore APK downloader',
 	author="Tuxicoman",
-	author_email="anonymous@anonymous.net",
+	author_email="debian@jesuislibre.net",
 	url="http://codingteam.net/project/googleplaydownloader",
 	license="AGPL",
 	packages=['googleplaydownloader', 'googleplaydownloader.ext_libs','googleplaydownloader.ext_libs.androguard', 'googleplaydownloader.ext_libs.androguard.core', 'googleplaydownloader.ext_libs.androguard.core', 'googleplaydownloader.ext_libs.androguard.core.bytecodes', 'googleplaydownloader.ext_libs.androguard.core.bytecodes.libdvm', 'googleplaydownloader.ext_libs.googleplay_api' ],
