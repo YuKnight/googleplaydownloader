@@ -541,6 +541,7 @@ class App(wx.App):
     self.SetAppName(softwareID("name"))
     fen = MainFrame(self, title)  
     fen.SetIcon(wx.Icon("img/icon.ico", wx.BITMAP_TYPE_ICO))
+    fen.SetMinSize(fen.GetSize())
     fen.Show(True)
     self.SetTopWindow(fen)
     return True
