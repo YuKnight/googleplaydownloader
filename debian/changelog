@@ -1,3 +1,9 @@
+googleplaydownloader (1.1-1) unstable; urgency=low
+
+  * Upstream release
+
+ -- Tuxicoman <debian@jesuislibre.net>  Sun, 6 April 2014 17:28:13 +0200
+ 
 googleplaydownloader (1.0-3) unstable; urgency=low
 
   * Fixes Lintian warnings

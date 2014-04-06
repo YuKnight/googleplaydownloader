@@ -160,7 +160,9 @@ def softwareID(query) :
   if query == "name":
     return u"Google Play Downloader"
   if query == "version":
-    return u"1.0"
+    with open("version.txt", "r") as f:
+      version = f.read()[:-1]
+    return version
   if query == "copyright":
     return u"Tuxicoman"
     

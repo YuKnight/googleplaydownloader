@@ -11,12 +11,13 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-
+with open("src/version.txt", "r") as f:
+  version = f.read()[:-1]
 
 from distutils.core import setup
 
 setup(name="googleplaydownloader",
-	version="1.0",
+	version=version,
 	description='Google PlayStore APK downloader',
 	author="Tuxicoman",
 	author_email="debian@jesuislibre.net",
@@ -24,5 +25,5 @@ setup(name="googleplaydownloader",
 	license="AGPL",
 	packages=['googleplaydownloader', 'googleplaydownloader.ext_libs','googleplaydownloader.ext_libs.androguard', 'googleplaydownloader.ext_libs.androguard.core', 'googleplaydownloader.ext_libs.androguard.core', 'googleplaydownloader.ext_libs.androguard.core.bytecodes', 'googleplaydownloader.ext_libs.androguard.core.bytecodes.libdvm', 'googleplaydownloader.ext_libs.googleplay_api' ],
 	package_dir={'googleplaydownloader' : 'src'},
-	package_data={'googleplaydownloader': ['img/icon.ico'], 'googleplaydownloader.ext_libs': ['android-checkin-1.0.jar']},
+	package_data={'googleplaydownloader': ["version.txt", 'img/icon.ico'], 'googleplaydownloader.ext_libs': ['android-checkin-1.0.jar']},
 	)

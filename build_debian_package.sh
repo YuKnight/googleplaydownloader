@@ -1,6 +1,6 @@
 #!/bin/bash
-src_version=1.0
-package_version=3
+src_version=$(cat src/version.txt)
+package_version=1
 
 echo --- Prepare packaging ---
 if [ ! -d "packages" ]; then
