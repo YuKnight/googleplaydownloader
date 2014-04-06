@@ -1,3 +1,15 @@
+googleplaydownloader (1.0-3) unstable; urgency=low
+
+  * Fixes Lintian warnings
+
+ -- Tuxicoman <debian@jesuislibre.net>  Sun, 6 April 2014 16:28:13 +0200
+ 
+googleplaydownloader (1.0-2) unstable; urgency=low
+
+  * Downgrade requirements for older Ubuntu versions
+
+ -- Tuxicoman <debian@jesuislibre.net>  Sat, 5 April 2014 16:28:13 +0200
+ 
 googleplaydownloader (1.0-1) unstable; urgency=low
 
   * add config file to store user preferences

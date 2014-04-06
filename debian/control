@@ -1,5 +1,5 @@
 Source: googleplaydownloader
-Section: internet
+Section: utils
 Priority: extra
 Maintainer: Tuxicoman <debian@jesuislibre.net>
 Build-Depends: debhelper (>= 7.0.50~), python
@@ -9,7 +9,9 @@ X-Python-Version: >= 2.7
 
 Package: googleplaydownloader
 Architecture: all
-Depends: ${python:Depends}, python (>=2.7), python-wxgtk2.8 (>=2.8), python-protobuf (>=2.4), java-common (>=0.47), python-requests (>=0.12.1)
+Depends: ${python:Depends}, python (>=2.7), python-wxgtk2.8 (>=2.8), python-protobuf (>=2.4), python-requests (>=0.8.2)
+Recommends: java-common (>=0.43)
 Description: Google Play Downloader
- Download Android application APK from Google Play Store without any personal Google account.
+ Download Android application APK from Google Play Store 
+ without any personal Google account.
  

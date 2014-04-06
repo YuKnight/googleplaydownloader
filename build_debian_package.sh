@@ -1,6 +1,6 @@
 #!/bin/bash
 src_version=1.0
-package_version=1
+package_version=3
 
 echo --- Prepare packaging ---
 if [ ! -d "packages" ]; then
@@ -37,7 +37,7 @@ cd ..
 cp -r debian dist/googleplaydownloader-${src_version}/debian
 
 cd dist/googleplaydownloader-${src_version}
-dpkg-buildpackage
+dpkg-buildpackage #-us -uc
 cd ../..
 
 mv dist/googleplaydownloader_${src_version}-${package_version}_all.deb packages/googleplaydownloader_${src_version}-${package_version}_all.deb
