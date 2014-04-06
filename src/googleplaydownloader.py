@@ -200,12 +200,11 @@ class MainPanel(wx.Panel):
     results_list.headers =[ "Title",
       "Creator",
       "Size",
-      "Last update",
-      "Version Code",
-      "Price",
-      "Rating",
       "Num Downloads",
-      "AppID"
+      "Last update",
+      "AppID",
+      "Version Code",
+      "Rating"
       ]
           
     results_list.fill_headers(results_list.headers)
@@ -290,30 +289,34 @@ class MainPanel(wx.Panel):
     
     results_list.fill_headers(results_list.headers)
     
-    for i, result in enumerate(results):
-      l = [ result.title,
-            result.creator,
-            sizeof_fmt(result.details.appDetails.installationSize),
-            result.details.appDetails.uploadDate,
-            result.details.appDetails.versionCode,
-            result.offer[0].formattedAmount,
-            "%.2f" % result.aggregateRating.starRating,
-            result.details.appDetails.numDownloads,
-            result.docid]
-                
-      item = results_list.InsertStringItem(i, "")
-      for j, text in enumerate(l):
-        results_list.SetStringItem(item,j,u"%s" % text)
-        
-    
-      #Associate data
-      results_list.data.append(result.docid)
-      results_list.SetItemData(item, i)
+    i = 0
+    for result in results:
+      if result.offer[0].checkoutFlowRequired == False: #if Free to download
+        l = [ result.title,
+              result.creator,
+              sizeof_fmt(result.details.appDetails.installationSize),
+              result.details.appDetails.numDownloads,
+              result.details.appDetails.uploadDate,
+              result.docid,
+              result.details.appDetails.versionCode,
+              "%.2f" % result.aggregateRating.starRating
+              ]
+                  
+        item = results_list.InsertStringItem(i, "")
+        for j, text in enumerate(l):
+          results_list.SetStringItem(item,j,u"%s" % text)
+          
       
-      #select first item
-      if i == 0:
-        results_list.SetItemState(item, wx.LIST_STATE_SELECTED, wx.LIST_STATE_SELECTED)
-        results_list.EnsureVisible(item)
+        #Associate data
+        results_list.data.append(result.docid)
+        results_list.SetItemData(item, i)
+        
+        #select first item
+        if i == 0:
+          results_list.SetItemState(item, wx.LIST_STATE_SELECTED, wx.LIST_STATE_SELECTED)
+          results_list.EnsureVisible(item)
+          
+        i+=1
       
       
     results_list.autoresize()
