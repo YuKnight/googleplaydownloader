@@ -44,13 +44,13 @@ def read_config(config_file_path, config_dict):
   configparser.read(config_file_path)
   for key in config_dict.keys():
     if configparser.has_option(config_section, key):
-      config_dict[key] = configparser.get(config_section, key)
+      config_dict[key] = configparser.get(config_section, key).decode('utf-8')
 
 def save_config(config_file_path, config_dict):
   configparser = ConfigParser.RawConfigParser()
   configparser.add_section(config_section)
   for key, value in config_dict.items():
-    configparser.set(config_section, key, value)
+    configparser.set(config_section, key, value.encode('utf-8'))
     
   if not os.path.exists(config_file_path) :
     os.makedirs(os.path.dirname(config_file_path))
@@ -265,13 +265,14 @@ class MainPanel(wx.Panel):
     if self.ask_download_folder_path() == True:
       download_folder_path = config["download_folder_path"]
       list_of_apks = [filename for filename in os.listdir(download_folder_path) if os.path.splitext(filename)[1] == ".apk"]
-      dlg = wx.ProgressDialog("Updating APKs",
-                                 "_" * 30 + "\n"*2,
-                                 maximum = len(list_of_apks),
-                                 parent=self,
-                                 style = wx.PD_AUTO_HIDE 
-                                 )
-      thread.start_new_thread(analyse_local_apks, (list_of_apks, self.playstore_api, download_folder_path, dlg, self.prepare_download_updates))
+      if len(list_of_apks) > 0:
+        dlg = wx.ProgressDialog("Updating APKs",
+                                   "_" * 30 + "\n"*2,
+                                   maximum = len(list_of_apks),
+                                   parent=self,
+                                   style = wx.PD_AUTO_HIDE 
+                                   )
+        thread.start_new_thread(analyse_local_apks, (list_of_apks, self.playstore_api, download_folder_path, dlg, self.prepare_download_updates))
 
 
         
