@@ -1,6 +1,7 @@
 #!/bin/bash
 src_version=$(cat src/version.txt)
 package_version=1
+software_name="googleplaydownloader"
 
 echo --- Prepare packaging ---
 if [ ! -d "packages" ]; then
@@ -18,7 +19,7 @@ echo --- Building python package ---
 
 #source dist
 python setup.py sdist --formats=gztar
-cp dist/googleplaydownloader-${src_version}.tar.gz packages/googleplaydownloader-${src_version}.tar.gz 
+cp dist/${software_name}-${src_version}.tar.gz packages/${software_name}-${src_version}.tar.gz 
 #clean
 rm MANIFEST
 
@@ -30,17 +31,17 @@ echo --- Building debian package ---
 
 #deb
 cd dist
-tar -xvzf googleplaydownloader-${src_version}.tar.gz
-mv googleplaydownloader-${src_version}.tar.gz googleplaydownloader_${src_version}.orig.tar.gz
+tar -xvzf ${software_name}-${src_version}.tar.gz
+mv ${software_name}-${src_version}.tar.gz ${software_name}_${src_version}.orig.tar.gz
 cd ..
 
-cp -r debian dist/googleplaydownloader-${src_version}/debian
+cp -r debian dist/${software_name}-${src_version}/debian
 
-cd dist/googleplaydownloader-${src_version}
+cd dist/${software_name}-${src_version}
 dpkg-buildpackage #-us -uc
 cd ../..
 
-mv dist/googleplaydownloader_${src_version}-${package_version}_all.deb packages/googleplaydownloader_${src_version}-${package_version}_all.deb
+mv dist/${software_name}_${src_version}-${package_version}_all.deb packages/${software_name}_${src_version}-${package_version}_all.deb
 
 echo --- Building debian package done ---
 
