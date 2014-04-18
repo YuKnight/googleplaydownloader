@@ -52,8 +52,9 @@ def save_config(config_file_path, config_dict):
   for key, value in config_dict.items():
     configparser.set(config_section, key, value.encode('utf-8'))
     
-  if not os.path.exists(config_file_path) :
-    os.makedirs(os.path.dirname(config_file_path))
+  config_file_folder = os.path.dirname(config_file_path)
+  if not os.path.exists(config_file_folder) :
+    os.makedirs(config_file_folder)
   with open(config_file_path, 'wb') as configfile:
     configparser.write(configfile)
   
