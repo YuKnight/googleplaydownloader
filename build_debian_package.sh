@@ -38,7 +38,7 @@ cd ..
 cp -r debian dist/${software_name}-${src_version}/debian
 
 cd dist/${software_name}-${src_version}
-dpkg-buildpackage #-us -uc
+dpkg-buildpackage -us -uc
 cd ../..
 
 mv dist/${software_name}_${src_version}-${package_version}_all.deb packages/${software_name}_${src_version}-${package_version}_all.deb
