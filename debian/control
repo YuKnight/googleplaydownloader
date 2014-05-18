@@ -9,7 +9,7 @@ X-Python-Version: >= 2.7
 
 Package: googleplaydownloader
 Architecture: all
-Depends: ${python:Depends}, python (>=2.7), python-wxgtk2.8 (>=2.8), python-protobuf (>=2.4), python-requests (>=0.8.2)
+Depends: ${python:Depends}, python (>=2.7), python-wxgtk2.8 (>=2.8), python-protobuf (>=2.4), python-requests (>=0.12)
 Recommends: java-common (>=0.43)
 Description: Google Play Downloader
  Download Android application APK from Google Play Store 
