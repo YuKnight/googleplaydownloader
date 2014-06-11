@@ -1,0 +1,5 @@
+## To build. Install maven/maven2 then :
+$ mvn package
+
+##To test :
+$ java -jar target/android-checkin-1.1.jar googleplay@jesuislibre.net lala123456789

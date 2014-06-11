@@ -30,7 +30,7 @@ from ext_libs.androguard.core.bytecodes import apk as androguard_apk #Androguard
 #default config
 config = {}
 config["download_folder_path"] = os.path.expanduser('~')
-config["android_ID"] = "34ec9a6143df5767"
+config["android_ID"] = "37ca2558ed1dafab"
 config["gmail_password"] = "lala123456789"
 config["gmail_address"] = "googleplay@jesuislibre.net"
 config["language"] = "fr_FR"
@@ -356,7 +356,8 @@ class MainPanel(wx.Panel):
     
     if config["android_ID"] == "" :
       #Launch Java to create an AndroidID
-      p = subprocess.Popen(["java","-jar", "ext_libs/android-checkin-1.0.jar", "%s" % config["gmail_address"], "%s" % config["gmail_password"]], stdout = subprocess.PIPE, stderr=subprocess.PIPE)
+      print(["java","-jar", "ext_libs/android-checkin-1.1.jar", "%s" % config["gmail_address"], "%s" % config["gmail_password"]])
+      p = subprocess.Popen(["java","-jar", "ext_libs/android-checkin-master/target/android-checkin-1.1.jar", "%s" % config["gmail_address"], "%s" % config["gmail_password"]], stdout = subprocess.PIPE, stderr=subprocess.PIPE)
       r = p.stderr.readlines()
       androidid_pattern = "AndroidId: "
       if len(r) == 10 and r[9].find(androidid_pattern) != -1 and r[9].find("\n") != -1:

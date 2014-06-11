@@ -1,3 +1,10 @@
+googleplaydownloader (1.2-1) unstable; urgency=low
+
+  * Upstream release
+  * Android 4.4 device
+
+ -- Tuxicoman <debian@jesuislibre.net>  Sun, 6 June 2014 17:28:13 +0200
+ 
 googleplaydownloader (1.1-1) unstable; urgency=low
 
   * Upstream release
