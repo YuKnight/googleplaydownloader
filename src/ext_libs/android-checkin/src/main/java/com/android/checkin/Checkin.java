@@ -72,7 +72,7 @@ public class Checkin {
         data.add(new BasicNameValuePair("app",            "com.google.android.gsf"));
         data.add(new BasicNameValuePair("client_sig",     "61ed377e85d386a8dfee6b864bd85b0bfaa5af81"));
         data.add(new BasicNameValuePair("lang",           "en"));
-        data.add(new BasicNameValuePair("sdk_version",    "16"));
+        data.add(new BasicNameValuePair("sdk_version",    "19"));
 
         this.authGsf = postFormFetchValue("https://android.clients.google.com/auth", data, "Auth");
     }
@@ -169,19 +169,19 @@ public class Checkin {
             .setDigest("1-929a0dca0eee55513280171a8585da7dcd3700f8")
             .setCheckin(AndroidCheckinProto.newBuilder()
                 .setBuild(AndroidBuildProto.newBuilder()
-                    .setId("google/yakju/maguro:4.4.3/KOT49H/737497:user/release-keys")
-                    .setProduct("tuna")
+                    .setId("samsung/m0xx/m0:4.3/JSS15J/I9300XXUGNA7:user/release-keys")
+                    .setProduct("m0xx")
                     .setCarrier("Google")
                     .setRadio("I9250XXLA2")
-                    .setBootloader("PRIMELA03")
+                    .setBootloader("I9300XXALEF")
                     .setClient("android-google")
                     .setTimestamp(new Date().getTime()/1000)
                     .setGoogleServices(19)
-                    .setDevice("maguro")
+                    .setDevice("m0")
                     .setSdkVersion(19)
-                    .setModel("Galaxy Nexus")
+                    .setModel("GT-I9300")
                     .setManufacturer("Samsung")
-                    .setBuildProduct("yakju")
+                    .setBuildProduct("m0xx")
                     .setOtaInstalled(false))
                 .setLastCheckinMsec(0)
                 .addEvent(AndroidEventProto.newBuilder()
@@ -214,7 +214,7 @@ public class Checkin {
                 .setScreenLayout(2)
                 .setHasHardKeyboard(false)
                 .setHasFiveWayNavigation(false)
-                .setScreenDensity(320)
+                .setScreenDensity(335)
                 .setGlEsVersion(131072)
                 .addAllSystemSharedLibrary(Arrays.asList(
                     "android.test.runner",
@@ -315,6 +315,7 @@ public class Checkin {
                     "GL_OES_compressed_paletted_texture",
                     "GL_OES_depth24",
                     "GL_OES_depth_texture",
+                    "GL_OES_depth_texture_cube_map",
                     "GL_OES_draw_texture",
                     "GL_OES_egl_sync",
                     "GL_OES_element_index_uint",

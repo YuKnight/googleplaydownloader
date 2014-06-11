@@ -30,7 +30,7 @@ from ext_libs.androguard.core.bytecodes import apk as androguard_apk #Androguard
 #default config
 config = {}
 config["download_folder_path"] = os.path.expanduser('~')
-config["android_ID"] = "37ca2558ed1dafab"
+config["android_ID"] = "8973055303786461707"
 config["gmail_password"] = "lala123456789"
 config["gmail_address"] = "googleplay@jesuislibre.net"
 config["language"] = "fr_FR"
