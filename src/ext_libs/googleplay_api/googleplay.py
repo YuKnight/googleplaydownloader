@@ -118,7 +118,7 @@ class GooglePlayAPI(object):
                                 "device_country": "fr",
                                 "operatorCountry": "fr",
                                 "lang": "fr",
-                                "sdk_version": "16"}
+                                "sdk_version": "19"}
             headers = {
                 "Accept-Encoding": "",
             }
@@ -271,7 +271,7 @@ class GooglePlayAPI(object):
         }
 
         headers = {
-                   "User-Agent" : "AndroidDownloadManager/4.1.1 (Linux; U; Android 4.1.1; Nexus S Build/JRO03E)",
+                   "User-Agent" : "AndroidDownloadManager/4.4.3 (Linux; U; Android 4.4.3; Nexus S Build/JRO03E)",
                    "Accept-Encoding": "",
                   }
 
