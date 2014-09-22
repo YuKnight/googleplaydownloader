@@ -1,28 +1,34 @@
+googleplaydownloader (1.3-1) unstable; urgency=low
+
+  * Fix SSL "TypeError: buf must be a byte string"
+
+ -- Tuxicoman <debian@jesuislibre.net>  Sun, 23 Sep 2014 17:28:13 +0200
+
 googleplaydownloader (1.2-1) unstable; urgency=low
 
   * Upstream release
   * Android 4.4 device
 
  -- Tuxicoman <debian@jesuislibre.net>  Sun, 6 June 2014 17:28:13 +0200
- 
+
 googleplaydownloader (1.1-1) unstable; urgency=low
 
   * Upstream release
 
  -- Tuxicoman <debian@jesuislibre.net>  Sun, 6 April 2014 17:28:13 +0200
- 
+
 googleplaydownloader (1.0-3) unstable; urgency=low
 
   * Fixes Lintian warnings
 
  -- Tuxicoman <debian@jesuislibre.net>  Sun, 6 April 2014 16:28:13 +0200
- 
+
 googleplaydownloader (1.0-2) unstable; urgency=low
 
   * Downgrade requirements for older Ubuntu versions
 
  -- Tuxicoman <debian@jesuislibre.net>  Sat, 5 April 2014 16:28:13 +0200
- 
+
 googleplaydownloader (1.0-1) unstable; urgency=low
 
   * add config file to store user preferences

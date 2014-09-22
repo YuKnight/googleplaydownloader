@@ -122,7 +122,7 @@ class GooglePlayAPI(object):
             headers = {
                 "Accept-Encoding": "",
             }
-            response = requests.post(self.URL_LOGIN, data=params, headers=headers, verify=False)
+            response = requests.post(self.URL_LOGIN, data=params, headers=headers, verify=True)
             data = response.text.split()
             params = {}
             for d in data:
@@ -135,7 +135,7 @@ class GooglePlayAPI(object):
                 raise LoginError("server says: " + params["error"])
             else:
                 raise LoginError("Auth token not found.")
-                
+
     def executeRequestApi2(self, path, datapost=None, post_content_type="application/x-www-form-urlencoded; charset=UTF-8"):
         if (datapost is None and path in self.preFetch):
             data = self.preFetch[path]
@@ -158,9 +158,9 @@ class GooglePlayAPI(object):
 
             url = "https://android.clients.google.com/fdfe/%s" % path
             if datapost is not None:
-                response = requests.post(url, data=datapost, headers=headers, verify=False)
+                response = requests.post(url, data=str(datapost), headers=headers, verify=True)
             else:
-                response = requests.get(url, headers=headers, verify=False)
+                response = requests.get(url, headers=headers, verify=True)
             data = response.content
 
         '''
@@ -237,7 +237,7 @@ class GooglePlayAPI(object):
             path += "&o=%s" % requests.utils.quote(offset)
         message = self.executeRequestApi2(path)
         return message.payload.listResponse
-    
+
     def reviews(self, packageName, filterByDevice=False, sort=2, nb_results=None, offset=None):
         """Browse reviews.
         packageName is the app unique ID.
@@ -251,7 +251,7 @@ class GooglePlayAPI(object):
             path += "&dfil=1"
         message = self.executeRequestApi2(path)
         return message.payload.reviewResponse
-    
+
     def download(self, packageName, versionCode, offerType=1):
         """Download an app and return its raw data (APK file).
 
@@ -275,6 +275,6 @@ class GooglePlayAPI(object):
                    "Accept-Encoding": "",
                   }
 
-        response = requests.get(url, headers=headers, cookies=cookies, verify=False)
+        response = requests.get(url, headers=headers, cookies=cookies, verify=True)
         return response.content
 
