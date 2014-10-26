@@ -29,12 +29,15 @@ from ext_libs.androguard.core.bytecodes import apk as androguard_apk #Androguard
 
 #default config
 config = {}
-config["download_folder_path"] = os.path.expanduser('~')
-config["android_ID"] = "3c1d9e3109278b1e"
-config["gmail_password"] = "lala123456"
-config["gmail_address"] = "aaaggspoofing@gmail.com"
-config["language"] = "fr_FR"
 
+def default_values():
+  config["download_folder_path"] = os.path.expanduser('~')
+  config["android_ID"] = "3c1d9e3109278b1e"
+  config["gmail_password"] = "lala123456"
+  config["gmail_address"] = "aaaggspoofing@gmail.com"
+  config["language"] = "fr_FR"
+
+default_values()
 
 config_file_path = os.path.expanduser('~/.config/googleplaydownloader/googleplaydownloader.conf')
 config_section = "googleplaydownloader"
@@ -485,7 +488,7 @@ class ConfigDialog(wx.Dialog):
 
     text_size = 250
     sizer = wx.BoxSizer(wx.VERTICAL)
-    gridSizer = wx.FlexGridSizer(rows=4, cols=2, hgap=5, vgap=5)
+    gridSizer = wx.FlexGridSizer(rows=5, cols=2, hgap=5, vgap=5)
     sizer.Add(gridSizer, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
 
     label = wx.StaticText(self, -1, "Gmail address:")
@@ -508,6 +511,12 @@ class ConfigDialog(wx.Dialog):
     gridSizer.Add(label,0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT,5)
     gridSizer.Add(self.language,1, wx.EXPAND|wx.ALIGN_CENTRE|wx.ALL, 5)
 
+    label = wx.StaticText(self, -1, "")
+    gridSizer.Add(label,0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT,5)
+    reset_btn = wx.Button(self, -1, "Reset to default values")
+    self.Bind(wx.EVT_BUTTON, self.reset_values, reset_btn)
+    gridSizer.Add(reset_btn,1, wx.EXPAND|wx.ALIGN_CENTRE|wx.ALL, 5)
+
     line = wx.StaticLine(self, -1, size=(20,-1), style=wx.LI_HORIZONTAL)
     sizer.Add(line, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT|wx.TOP, 5)
 
@@ -520,6 +529,16 @@ class ConfigDialog(wx.Dialog):
 
     self.SetSizer(sizer)
     sizer.Fit(self)
+
+    #Fill data
+    self.language.SetValue(config["language"])
+    self.android_ID.SetValue(config["android_ID"])
+    self.gmail_address.SetValue(config["gmail_address"])
+    self.gmail_password.SetValue(config["gmail_password"])
+
+  def reset_values(self, event):
+    #Reset to default values
+    default_values()
 
     #Fill data
     self.language.SetValue(config["language"])
