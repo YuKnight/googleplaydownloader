@@ -357,26 +357,9 @@ class MainPanel(wx.Panel):
 
     dlg.Destroy()
 
-    if config["android_ID"] == "" :
-      #Launch Java to create an AndroidID
-      print(["java","-jar", "ext_libs/android-checkin-1.1.jar", "%s" % config["gmail_address"], "%s" % config["gmail_password"]])
-      p = subprocess.Popen(["java","-jar", "ext_libs/android-checkin-master/target/android-checkin-1.1.jar", "%s" % config["gmail_address"], "%s" % config["gmail_password"]], stdout = subprocess.PIPE, stderr=subprocess.PIPE)
-      r = p.stderr.readlines()
-      androidid_pattern = "AndroidId: "
-      if len(r) == 10 and r[9].find(androidid_pattern) != -1 and r[9].find("\n") != -1:
-        config["android_ID"] = r[9][len(androidid_pattern):r[9].find("\n")]
-        message = "sucessful"
-      else:
-        #Autogeneration of AndroidID failed
-        message = "failed"
-      dlg = wx.MessageDialog(self, "Autogeneration of AndroidID %s" % message,'Autogeneration of AndroidID %s' % message, wx.OK | wx.ICON_INFORMATION)
-      dlg.ShowModal()
-      dlg.Destroy()
-
-    if config["android_ID"] != "" :
-      #Connect to GooglePlay
-      if self.connect_to_googleplay_api() == True:
-        save_config(config_file_path, config)
+    #Connect to GooglePlay
+    if self.connect_to_googleplay_api() == True:
+      save_config(config_file_path, config)
 
 
   def view_webpage_selection(self, results_list):
@@ -501,7 +484,7 @@ class ConfigDialog(wx.Dialog):
     gridSizer.Add(label,0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT,5)
     gridSizer.Add(self.gmail_password,1, wx.EXPAND|wx.ALIGN_CENTRE|wx.ALL, 5)
 
-    label = wx.StaticText(self, -1, "Android ID:\n(leave blank to autogenerate.\nautogeneration requires Java installed)")
+    label = wx.StaticText(self, -1, "Android ID:")
     self.android_ID = wx.TextCtrl(self, -1, "", size=(text_size,-1))
     gridSizer.Add(label,0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT,5)
     gridSizer.Add(self.android_ID,1, wx.EXPAND|wx.ALIGN_CENTRE|wx.ALL, 5)
@@ -511,9 +494,14 @@ class ConfigDialog(wx.Dialog):
     gridSizer.Add(label,0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT,5)
     gridSizer.Add(self.language,1, wx.EXPAND|wx.ALIGN_CENTRE|wx.ALL, 5)
 
-    label = wx.StaticText(self, -1, "")
-    gridSizer.Add(label,0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT,5)
-    reset_btn = wx.Button(self, -1, "Reset to default values")
+    #label = wx.StaticText(self, -1, "")
+    #gridSizer.Add(label,0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT,5)
+
+    android_id_btn = wx.Button(self, -1, "Generate new Android ID(requires Java installed)")
+    self.Bind(wx.EVT_BUTTON, self.generate_android_id, android_id_btn)
+    gridSizer.Add(android_id_btn,0, wx.EXPAND|wx.ALIGN_CENTRE|wx.ALL, 5)
+
+    reset_btn = wx.Button(self, -1, "Reset all values to default")
     self.Bind(wx.EVT_BUTTON, self.reset_values, reset_btn)
     gridSizer.Add(reset_btn,1, wx.EXPAND|wx.ALIGN_CENTRE|wx.ALL, 5)
 
@@ -536,7 +524,7 @@ class ConfigDialog(wx.Dialog):
     self.gmail_address.SetValue(config["gmail_address"])
     self.gmail_password.SetValue(config["gmail_password"])
 
-  def reset_values(self, event):
+  def reset_values(self, event=None):
     #Reset to default values
     default_values()
 
@@ -545,6 +533,23 @@ class ConfigDialog(wx.Dialog):
     self.android_ID.SetValue(config["android_ID"])
     self.gmail_address.SetValue(config["gmail_address"])
     self.gmail_password.SetValue(config["gmail_password"])
+
+  def generate_android_id(self, event=None):
+    #Launch Java to create an AndroidID
+    p = subprocess.Popen(["java","-jar", "ext_libs/android-checkin/target/android-checkin-1.1.jar", "%s" % config["gmail_address"], "%s" % config["gmail_password"]], stdout = subprocess.PIPE, stderr=subprocess.PIPE)
+    r = p.stderr.readlines()
+    androidid_pattern = "AndroidId: "
+    if len(r) == 10 and r[9].find(androidid_pattern) != -1 and r[9].find("\n") != -1:
+      android_id = r[9][len(androidid_pattern):r[9].find("\n")]
+      message = "sucessful"
+    else:
+      #Autogeneration of AndroidID failed
+      message = "failed"
+    dlg = wx.MessageDialog(self, "Autogeneration of AndroidID %s" % message,'Autogeneration of AndroidID %s' % message, wx.OK | wx.ICON_INFORMATION)
+    dlg.ShowModal()
+    dlg.Destroy()
+    if message == "sucessful":
+      self.android_ID.SetValue(android_id)
 
 
 
