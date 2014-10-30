@@ -536,7 +536,7 @@ class ConfigDialog(wx.Dialog):
 
   def generate_android_id(self, event=None):
     #Launch Java to create an AndroidID
-    command = ["java","-jar", "ext_libs/android-checkin/target/android-checkin-1.1-jar-with-dependencies.jar", "%s" % config["gmail_address"], "%s" % config["gmail_password"]]
+    command = ["java","-jar", os.path.join(current_path,"ext_libs/android-checkin/target/android-checkin-1.1-jar-with-dependencies.jar"), "%s" % config["gmail_address"], "%s" % config["gmail_password"]]
     p = subprocess.Popen(command, stdout = subprocess.PIPE, stderr=subprocess.PIPE)
     r = p.stderr.readlines()
     androidid_pattern = "AndroidId: "
