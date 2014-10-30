@@ -536,7 +536,8 @@ class ConfigDialog(wx.Dialog):
 
   def generate_android_id(self, event=None):
     #Launch Java to create an AndroidID
-    p = subprocess.Popen(["java","-jar", "ext_libs/android-checkin/target/android-checkin-1.1.jar", "%s" % config["gmail_address"], "%s" % config["gmail_password"]], stdout = subprocess.PIPE, stderr=subprocess.PIPE)
+    command = ["java","-jar", "ext_libs/android-checkin/target/android-checkin-1.1-jar-with-dependencies.jar", "%s" % config["gmail_address"], "%s" % config["gmail_password"]]
+    p = subprocess.Popen(command, stdout = subprocess.PIPE, stderr=subprocess.PIPE)
     r = p.stderr.readlines()
     androidid_pattern = "AndroidId: "
     if len(r) == 10 and r[9].find(androidid_pattern) != -1 and r[9].find("\n") != -1:
@@ -545,6 +546,8 @@ class ConfigDialog(wx.Dialog):
     else:
       #Autogeneration of AndroidID failed
       message = "failed"
+      print " ".join(command)
+      print r
     dlg = wx.MessageDialog(self, "Autogeneration of AndroidID %s" % message,'Autogeneration of AndroidID %s' % message, wx.OK | wx.ICON_INFORMATION)
     dlg.ShowModal()
     dlg.Destroy()
