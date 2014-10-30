@@ -25,5 +25,5 @@ setup(name="googleplaydownloader",
 	license="AGPL",
 	packages=['googleplaydownloader', 'googleplaydownloader.ext_libs','googleplaydownloader.ext_libs.androguard', 'googleplaydownloader.ext_libs.androguard.core', 'googleplaydownloader.ext_libs.androguard.core', 'googleplaydownloader.ext_libs.androguard.core.bytecodes', 'googleplaydownloader.ext_libs.androguard.core.bytecodes.libdvm', 'googleplaydownloader.ext_libs.googleplay_api', 'googleplaydownloader.ext_libs.android-checkin' ],
 	package_dir={'googleplaydownloader' : 'src'},
-	package_data={'googleplaydownloader': ["version.txt", 'img/icon.ico'], 'googleplaydownloader.ext_libs.android-checkin' : ["target/android-checkin-1.1.jar", "lib/commons-codec-1.6.jar",  "lib/commons-logging-1.1.1.jar",  "lib/fluent-hc-4.2.2.jar",  "lib/httpclient-4.2.2.jar",  "lib/httpclient-cache-4.2.2.jar"  "lib/httpcore-4.2.2.jar", "lib/httpmime-4.2.2.jar", "lib/protobuf-java-2.5.0.jar"]}
+	package_data={'googleplaydownloader': ["version.txt", 'img/icon.ico'], 'googleplaydownloader.ext_libs.android-checkin' : ["target/android-checkin-1.1.jar", "lib/commons-codec-1.6.jar",  "lib/commons-logging-1.1.1.jar",  "lib/fluent-hc-4.2.2.jar",  "lib/httpclient-4.2.2.jar",  "lib/httpclient-cache-4.2.2.jar"  "lib/httpcore-4.2.2.jar", "lib/httpmime-4.2.2.jar", "lib/protobuf-java-2.6.0.jar"]}
 	)
