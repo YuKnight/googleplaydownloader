@@ -1,3 +1,13 @@
+googleplaydownloader (1.4-1) unstable; urgency=low
+
+  * New bundled credentials (old ones are banned)
+  * Add buttons to generate Android ID and to reset credentials to default values
+  * Newer user agent (maybe newer softwares will appear)
+  * Fix generation of Android ID
+  * Android-checkin.jar recompiled with protobuf 2.6.0
+
+ -- Tuxicoman <debian@jesuislibre.net>  Thu, 30 Oct 2014 17:28:13 +0200
+
 googleplaydownloader (1.3-1) unstable; urgency=low
 
   * Fix SSL "TypeError: buf must be a byte string"

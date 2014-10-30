@@ -1,0 +1,9 @@
+googleplaydownloader (1.4-1) unstable; urgency=low
+
+  The previous default account has been banned cannot be used anymore.
+  A new default account is provided in this release.
+  To use it, go in the settings and press "Reset all values to default".
+  You can then search and download software on the Google Play again.
+  he software again.
+
+ -- Tuxicoman <debian@jesuislibre.net>  Thu, 30 Oct 2014 17:28:13 +0200
