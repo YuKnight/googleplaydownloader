@@ -11,14 +11,16 @@ These libs are packaged in the src/ext_libs folder for user convenience but are 
 The GUI (googleplaydownloader.py) is under AGPL licence (copyright Tuxicoman)
 
   Dependencies are:
-  - protobuf for messages exchanges with Google PlayStore
-  - python-requests
-  - wxpython for the GUI
+  - python-protobuf (>=2.4) for messages exchanges with Google PlayStore
+  - python-requests (>=0.12)
+  - python-ndg-httpsclient for SSL connections
+  - python-pyasn1 for SSL connections
+  - python-wxgtk2.8 (>=2.8) for the GUI
   - python 2.5+
   - java (optional but needed for autogeneration of a new AndroiID)
-  
+
   You can install them through your package manager. For example on Debian :
-  # apt-get install python-protobuf python-wxgtk2.8 python-requests java-common
+  # apt-get install python-protobuf python-wxgtk2.8 python-requests java-common python-ndg-httpsclient python-pyasn1
 
 1# method : manual launch
 
@@ -32,7 +34,7 @@ The GUI (googleplaydownloader.py) is under AGPL licence (copyright Tuxicoman)
 
   Install it
   # dpkg -i googleplaydownloader.deb
-  
+
   Solve packages dependencies
   # apt-get install -f
 
