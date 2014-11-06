@@ -540,8 +540,8 @@ class ConfigDialog(wx.Dialog):
     p = subprocess.Popen(command, stdout = subprocess.PIPE, stderr=subprocess.PIPE)
     r = p.stderr.readlines()
     androidid_pattern = "AndroidId: "
-    if len(r) == 10 and r[9].find(androidid_pattern) != -1 and r[9].find("\n") != -1:
-      android_id = r[9][len(androidid_pattern):r[9].find("\n")]
+    if len(r) > 9 and r[-1].find(androidid_pattern) != -1 and r[-1].find("\n") != -1:
+      android_id = r[-1][len(androidid_pattern):r[-1].find("\n")]
       message = "sucessful"
     else:
       #Autogeneration of AndroidID failed
