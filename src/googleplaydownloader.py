@@ -32,9 +32,9 @@ config = {}
 
 def default_values():
   config["download_folder_path"] = os.path.expanduser('~')
-  config["android_ID"] = "3c1d9e3109278b1e"
-  config["gmail_password"] = "lala123456"
-  config["gmail_address"] = "aaaggspoofing@gmail.com"
+  config["android_ID"] = "36656d4cd611a15f"
+  config["gmail_password"] = "aqwxszed"
+  config["gmail_address"] = "gpdblabliblo@gmail.com"
   config["language"] = "fr_FR"
 
 default_values()
