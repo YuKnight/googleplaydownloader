@@ -41,9 +41,9 @@ def default_account(config_dict):
   """Restore default values only for account credential"""
   default_values_dict = {}
   default_values(default_values_dict)
-  config_dict["android_ID"] = config_dict["android_ID"]
-  config_dict["gmail_password"] = config_dict["gmail_password"]
-  config_dict["gmail_address"] = config_dict["gmail_address"]
+  config_dict["android_ID"] = default_values_dict["android_ID"]
+  config_dict["gmail_password"] = default_values_dict["gmail_password"]
+  config_dict["gmail_address"] = default_values_dict["gmail_address"]
 
 default_values(config)
 
