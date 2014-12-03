@@ -161,13 +161,17 @@ def download_selection(playstore_api, list_of_packages_to_download, dlg, return_
       data = playstore_api.download(packagename, vc)
     except Exception as exc:
       print "Error while downloading %s : %s" % (packagename, exc)
-      failed_downloads.append(item)
+      failed_downloads.append((item, exc))
     else:
       if filename == None:
         filename = packagename + ".apk"
       filepath = os.path.join(download_folder_path,filename)
 
-      open(filepath, "wb").write(data)
+      try:
+        open(filepath, "wb").write(data)
+      except IOError, exc:
+        print "Error while writing %s : %s" % (packagename, exc)
+        failed_downloads.append((item, exc))
 
   wx.CallAfter(dlg.Update, position+1)   #Reach end of progress dialog
   wx.CallAfter(return_function,failed_downloads)
@@ -387,12 +391,13 @@ class MainPanel(wx.Panel):
       message = "Download complete"
     else:
       message = "A few packages could not be downloaded :"
-      for item in failed_downloads:
+      for item, exception in failed_downloads:
         package_name, filename = item
         if filename !=None :
           message += "\n%s : %s" % (filename, package_name)
         else:
           message += "\n%s" % package_name
+        message += "\n%s\n" % exception
 
     #Show info dialog
     dlg = wx.MessageDialog(self, message,'Download report', wx.OK | wx.ICON_INFORMATION)
