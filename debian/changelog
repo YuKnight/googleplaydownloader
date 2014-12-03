@@ -1,3 +1,12 @@
+googleplaydownloader (1.5-1) unstable; urgency=low
+
+  * New bundled credentials (old ones are banned)
+  * Dependencies compatible with Debian Jessie
+  * Python2 explicit call for those who have python3 as default
+  * Fix Android ID generation if JAVA has preprocess output.
+
+ -- Tuxicoman <debian@jesuislibre.net>  Thu, 3 Dec 2014 17:28:13 +0200
+
 googleplaydownloader (1.4-1) unstable; urgency=low
 
   * New bundled credentials (old ones are banned)
