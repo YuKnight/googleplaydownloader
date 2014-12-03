@@ -30,14 +30,22 @@ from ext_libs.androguard.core.bytecodes import apk as androguard_apk #Androguard
 #default config
 config = {}
 
-def default_values():
-  config["download_folder_path"] = os.path.expanduser('~')
-  config["android_ID"] = "36656d4cd611a15f"
-  config["gmail_password"] = "aqwxszed"
-  config["gmail_address"] = "gpdblabliblo@gmail.com"
-  config["language"] = "fr_FR"
+def default_values(config_dict):
+  config_dict["download_folder_path"] = os.path.expanduser('~')
+  config_dict["language"] = "fr_FR"
+  config_dict["android_ID"] = "36656d4cd611a15f"
+  config_dict["gmail_password"] = "aqwxszed"
+  config_dict["gmail_address"] = "gpdblabliblo@gmail.com"
 
-default_values()
+def default_account(config_dict):
+  """Restore default values only for account credential"""
+  default_values_dict = {}
+  default_values(default_values_dict)
+  config_dict["android_ID"] = config_dict["android_ID"]
+  config_dict["gmail_password"] = config_dict["gmail_password"]
+  config_dict["gmail_address"] = config_dict["gmail_address"]
+
+default_values(config)
 
 config_file_path = os.path.expanduser('~/.config/googleplaydownloader/googleplaydownloader.conf')
 config_section = "googleplaydownloader"
@@ -526,7 +534,7 @@ class ConfigDialog(wx.Dialog):
 
   def reset_values(self, event=None):
     #Reset to default values
-    default_values()
+    default_values(config)
 
     #Fill data
     self.language.SetValue(config["language"])
@@ -571,8 +579,16 @@ class MainFrame(wx.Frame):
     self.Fit()
     self.CenterOnScreen()
 
-    #Init
+    ##Init
+
+    #Reload config form file if any
     read_config(config_file_path, config)
+
+    #Change account credential if known to be obsolete (old default credentials listed here)
+    if config["gmail_address"] in ("aaaggspoofing@gmail.com", "googleplay@jesuislibre.net"):
+      default_account(config)
+
+    #Connection
     self.panel.connect_to_googleplay_api()
 
 class App(wx.App):
