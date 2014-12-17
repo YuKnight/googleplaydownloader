@@ -33,9 +33,9 @@ config = {}
 def default_values(config_dict):
   config_dict["download_folder_path"] = os.path.expanduser('~')
   config_dict["language"] = "fr_FR"
-  config_dict["android_ID"] = "36656d4cd611a15f"
-  config_dict["gmail_password"] = "aqwxszed"
-  config_dict["gmail_address"] = "gpdblabliblo@gmail.com"
+  config_dict["android_ID"] = "3dbbc637c898df72"
+  config_dict["gmail_password"] = "bingo125"
+  config_dict["gmail_address"] =  "sophie.toutou12@gmail.com"
 
 def default_account(config_dict):
   """Restore default values only for account credential"""
@@ -590,7 +590,7 @@ class MainFrame(wx.Frame):
     read_config(config_file_path, config)
 
     #Change account credential if known to be obsolete (old default credentials listed here)
-    if config["gmail_address"] in ("aaaggspoofing@gmail.com", "googleplay@jesuislibre.net"):
+    if config["gmail_address"] in ("aaaggspoofing@gmail.com", "googleplay@jesuislibre.net", "gpdblabliblo@gmail.com"):
       default_account(config)
 
     #Connection
