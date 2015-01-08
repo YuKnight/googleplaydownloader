@@ -1,3 +1,18 @@
+googleplaydownloader (1.7-1) unstable; urgency=low
+
+  * New bundled credentials (old ones are banned)
+  * Hide default credentials in GUI
+  * Towards pip package
+
+ -- Tuxicoman <debian@jesuislibre.net>  Thu, 8 Jan 2015 17:28:13 +0200
+
+googleplaydownloader (1.6-1) unstable; urgency=low
+
+  * New bundled credentials (old ones are banned)
+  * Fix error if the permissions of the download folder are not sufficient
+
+ -- Tuxicoman <debian@jesuislibre.net>  Thu, 20 Dec 2014 17:28:13 +0200
+
 googleplaydownloader (1.5-1) unstable; urgency=low
 
   * New bundled credentials (old ones are banned)

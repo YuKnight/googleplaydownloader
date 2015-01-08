@@ -1,55 +1,38 @@
 #!/bin/bash
-src_version=$(cat src/version.txt)
+set -e
+
+src_version=$(python setup.py --version)
 package_version=1
-software_name="googleplaydownloader"
+software_name=$(python setup.py --name)
 
-echo --- Prepare packaging ---
-if [ ! -d "packages" ]; then
-  mkdir packages
-fi
+BUILD_DIRECTORIES="dist ${software_name}.egg-info"
 
-if [ -d "dist" ]; then
-  rm -rf dist
-fi
-echo --- Prepare packaging done ---
+function clean_build_directories {
+    echo "--- Cleaning Build Directories ---"
+    for directory in ${BUILD_DIRECTORIES}; do
+        if [ -d ${directory} ]; then
+            rm -rf ${directory}
+        fi
+    done
+}
 
+function build_python_package {
+    echo "--- Building Python Package ---"
+    python setup.py sdist --formats=gztar
+}
 
+function build_debian_package {
+    echo "--- Building Debian Package ---"
+    mv dist/${software_name}-${src_version}.tar.gz dist/${software_name}_${src_version}.orig.tar.gz
+    tar -C dist -xvf dist/${software_name}_${src_version}.orig.tar.gz
+    mv dist/${software_name}-${src_version} dist/${software_name}_${src_version}
+    cp -r debian dist/${software_name}_${src_version}/debian
+    (cd dist/${software_name}_${src_version}/ && dpkg-buildpackage -us -uc)
+    mv dist/${software_name}_${src_version}-${package_version}_all.deb packages/
+    cp dist/${software_name}_${src_version}.orig.tar.gz packages/
+}
 
-echo --- Building python package ---
-
-#source dist
-python setup.py sdist --formats=gztar
-cp dist/${software_name}-${src_version}.tar.gz packages/${software_name}-${src_version}.tar.gz 
-#clean
-rm MANIFEST
-
-echo --- Building python package done ---
-
-
-
-echo --- Building debian package ---
-
-#deb
-cd dist
-tar -xvzf ${software_name}-${src_version}.tar.gz
-mv ${software_name}-${src_version}.tar.gz ${software_name}_${src_version}.orig.tar.gz
-cd ..
-
-cp -r debian dist/${software_name}-${src_version}/debian
-
-cd dist/${software_name}-${src_version}
-dpkg-buildpackage -us -uc
-cd ../..
-
-mv dist/${software_name}_${src_version}-${package_version}_all.deb packages/${software_name}_${src_version}-${package_version}_all.deb
-
-echo --- Building debian package done ---
-
-
-
-echo --- Cleaning ---
-
-#clean
-rm -rf dist
-
-echo --- Cleaning done ---
+clean_build_directories
+build_python_package
+build_debian_package
+clean_build_directories

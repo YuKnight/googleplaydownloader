@@ -16,10 +16,14 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Androguard.  If not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import absolute_import
 
-from androguard.core import bytecode
-from androguard.core import androconf
-from androguard.core.bytecodes.dvm_permissions import DVM_PERMISSIONS
+from .. import bytecode
+from .. import androconf
+from .dvm_permissions import DVM_PERMISSIONS
+# from androguard.core import bytecode
+# from androguard.core import androconf
+# from androguard.core.bytecodes.dvm_permissions import DVM_PERMISSIONS
 
 import StringIO
 from struct import pack, unpack

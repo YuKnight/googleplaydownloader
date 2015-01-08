@@ -1,6 +1,5 @@
 #! /usr/bin/python2
 # -*- coding: utf-8 -*-
-
 """
 GooglePlayDownloader
 Copyright (C) 2013   Tuxicoman
@@ -10,32 +9,29 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 You should have received a copy of the GNU Affero General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import wx, platform, os, sys, thread, subprocess, ConfigParser
+from __future__ import absolute_import
+import wx, platform, os, sys, thread, subprocess
+import ConfigParser as configparser
 from wx.lib.mixins.listctrl import ListCtrlAutoWidthMixin
 import wx.lib.hyperlink as hl
 import webbrowser
 
-#Go to source folder
-current_path = os.path.dirname(__file__)
-if current_path != "":
-  os.chdir(current_path)
+HERE = os.path.abspath(os.path.dirname(__file__))
+_icons_path = os.path.join(HERE, 'img')
 
-#Import external libs
-ext_libs_path = os.path.join(os.getcwd(), "ext_libs")
-sys.path.append(ext_libs_path)
 from ext_libs.googleplay_api.googleplay import GooglePlayAPI #GooglePlayAPI
 from ext_libs.googleplay_api.googleplay import LoginError
 from ext_libs.androguard.core.bytecodes import apk as androguard_apk #Androguard
 
-#default config
+
 config = {}
 
 def default_values(config_dict):
   config_dict["download_folder_path"] = os.path.expanduser('~')
   config_dict["language"] = "fr_FR"
-  config_dict["android_ID"] = "3dbbc637c898df72"
-  config_dict["gmail_password"] = "bingo125"
-  config_dict["gmail_address"] =  "sophie.toutou12@gmail.com"
+  config_dict["android_ID"] = "3f07fa136be3e63d"
+  config_dict["gmail_password"] = "jesuischarlie"
+  config_dict["gmail_address"] =  "googleplay@jesuislibre.net"
 
 def default_account(config_dict):
   """Restore default values only for account credential"""
@@ -45,34 +41,35 @@ def default_account(config_dict):
   config_dict["gmail_password"] = default_values_dict["gmail_password"]
   config_dict["gmail_address"] = default_values_dict["gmail_address"]
 
+#default config
 default_values(config)
 
 config_file_path = os.path.expanduser('~/.config/googleplaydownloader/googleplaydownloader.conf')
 config_section = "googleplaydownloader"
 
 def read_config(config_file_path, config_dict):
-  configparser = ConfigParser.RawConfigParser()
-  configparser.read(config_file_path)
+  config_parser = configparser.RawConfigParser()
+  config_parser.read(config_file_path)
   for key, previous_value in config_dict.items():
-    if configparser.has_option(config_section, key):
-      new_value = configparser.get(config_section, key).decode('utf-8')
+    if config_parser.has_option(config_section, key):
+      new_value = config_parser.get(config_section, key).decode('utf-8')
       if type(previous_value) in (list, bool):
         new_value = json.loads(new_value)
       config_dict[key] = new_value
 
 def save_config(config_file_path, config_dict):
-  configparser = ConfigParser.RawConfigParser()
-  configparser.add_section(config_section)
+  config_parser = configparser.RawConfigParser()
+  config_parser.add_section(config_section)
   for key, value in config_dict.items():
     if type(value) in (list, bool) :
       value = json.dumps(value)
-    configparser.set(config_section, key, value.encode('utf-8'))
+    config_parser.set(config_section, key, value.encode('utf-8'))
 
   config_file_folder = os.path.dirname(config_file_path)
   if not os.path.exists(config_file_folder) :
     os.makedirs(config_file_folder)
   with open(config_file_path, 'w') as configfile:
-    configparser.write(configfile)
+    config_parser.write(configfile)
 
 def sizeof_fmt(num):
   for x in ['bytes','KB','MB','GB','TB']:
@@ -181,8 +178,8 @@ def softwareID(query) :
   if query == "name":
     return u"Google Play Downloader"
   if query == "version":
-    with open("version.txt", "r") as f:
-      version = f.read()[:-1]
+    with open(os.path.join(HERE, "version.txt"), "r") as f:
+      version = f.read().strip()
     return version
   if query == "copyright":
     return u"Tuxicoman"
@@ -361,11 +358,25 @@ class MainPanel(wx.Panel):
     val = dlg.ShowModal()
 
     if val == wx.ID_OK:
+      default_account_values = {}
+      default_values(default_account_values)
       #Get data
-      config["language"] = dlg.language.GetValue()
-      config["android_ID"] = dlg.android_ID.GetValue()
-      config["gmail_address"] = dlg.gmail_address.GetValue()
-      config["gmail_password"] = dlg.gmail_password.GetValue()
+      if dlg.language.GetValue() != "":
+        config["language"] = dlg.language.GetValue()
+      else:
+        config["language"] = default_account_values["language"]
+      if dlg.android_ID.GetValue() != "":
+        config["android_ID"] = dlg.android_ID.GetValue()
+      else:
+        config["android_ID"] = default_account_values["android_ID"]
+      if dlg.gmail_address.GetValue() != "":
+        config["gmail_address"] = dlg.gmail_address.GetValue()
+      else:
+        config["gmail_address"] = default_account_values["gmail_address"]
+      if dlg.gmail_password.GetValue() != "":
+        config["gmail_password"] = dlg.gmail_password.GetValue()
+      else:
+        config["gmail_password"] = default_account_values["gmail_password"]
 
     dlg.Destroy()
 
@@ -484,6 +495,9 @@ class ConfigDialog(wx.Dialog):
 
     text_size = 250
     sizer = wx.BoxSizer(wx.VERTICAL)
+    label = wx.StaticText(self, -1, "Blank means default values. You have to provide an Android ID to use a custom Gmail account")
+    sizer.Add(label, 0, wx.ALIGN_CENTRE|wx.ALL, 5)
+
     gridSizer = wx.FlexGridSizer(rows=5, cols=2, hgap=5, vgap=5)
     sizer.Add(gridSizer, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
 
@@ -532,10 +546,15 @@ class ConfigDialog(wx.Dialog):
     sizer.Fit(self)
 
     #Fill data
+    default_account_values = {}
+    default_values(default_account_values)
     self.language.SetValue(config["language"])
-    self.android_ID.SetValue(config["android_ID"])
-    self.gmail_address.SetValue(config["gmail_address"])
-    self.gmail_password.SetValue(config["gmail_password"])
+    if default_account_values["android_ID"] != config["android_ID"]:
+      self.android_ID.SetValue(config["android_ID"])
+    if default_account_values["gmail_address"] != config["gmail_address"]:
+      self.gmail_address.SetValue(config["gmail_address"])
+    if default_account_values["gmail_password"] != config["gmail_password"]:
+      self.gmail_password.SetValue(config["gmail_password"])
 
   def reset_values(self, event=None):
     #Reset to default values
@@ -543,13 +562,13 @@ class ConfigDialog(wx.Dialog):
 
     #Fill data
     self.language.SetValue(config["language"])
-    self.android_ID.SetValue(config["android_ID"])
-    self.gmail_address.SetValue(config["gmail_address"])
-    self.gmail_password.SetValue(config["gmail_password"])
+    self.android_ID.SetValue("")
+    self.gmail_address.SetValue("")
+    self.gmail_password.SetValue("")
 
   def generate_android_id(self, event=None):
     #Launch Java to create an AndroidID
-    command = ["java","-jar", os.path.join(current_path,"ext_libs/android-checkin/target/android-checkin-1.1-jar-with-dependencies.jar"), "%s" % config["gmail_address"], "%s" % config["gmail_password"]]
+    command = ["java","-jar", os.path.join(HERE,"ext_libs/android-checkin/target/android-checkin-1.1-jar-with-dependencies.jar"), "%s" % config["gmail_address"], "%s" % config["gmail_password"]]
     p = subprocess.Popen(command, stdout = subprocess.PIPE, stderr=subprocess.PIPE)
     r = p.stderr.readlines()
     androidid_pattern = "AndroidId: "
@@ -601,7 +620,7 @@ class App(wx.App):
     title=u"%s %s" % (softwareID("name"), softwareID("version"))
     self.SetAppName(softwareID("name"))
     fen = MainFrame(self, title)
-    fen.SetIcon(wx.Icon("img/icon.ico", wx.BITMAP_TYPE_ICO))
+    fen.SetIcon(wx.Icon(os.path.join(_icons_path,"icon.ico"), wx.BITMAP_TYPE_ICO))
     fen.SetMinSize(fen.GetSize())
     fen.Show(True)
     self.SetTopWindow(fen)
