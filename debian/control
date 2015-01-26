@@ -2,7 +2,7 @@ Source: googleplaydownloader
 Section: utils
 Priority: extra
 Maintainer: Tuxicoman <debian@jesuislibre.net>
-Build-Depends: debhelper (>= 7.0.50~), python
+Build-Depends: debhelper (>= 7.0.50~), python, dh-python
 Standards-Version: 3.8.4
 Homepage: https://codingteam.net/project/googleplaydownloader
 X-Python-Version: >= 2.7

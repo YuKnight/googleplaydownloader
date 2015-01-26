@@ -1,7 +1,6 @@
 googleplaydownloader (1.7-1) unstable; urgency=low
 
-  * New bundled credentials (old ones are banned)
-  * Hide default credentials in GUI
+  * Get default credentials from developper website
   * Towards pip package
 
  -- Tuxicoman <debian@jesuislibre.net>  Thu, 8 Jan 2015 17:28:13 +0200
