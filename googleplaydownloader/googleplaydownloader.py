@@ -10,7 +10,7 @@ You should have received a copy of the GNU Affero General Public License along w
 """
 
 from __future__ import absolute_import
-import wx, platform, os, sys, thread, subprocess
+import wx, platform, os, sys, thread, subprocess, urllib, json
 import ConfigParser as configparser
 from wx.lib.mixins.listctrl import ListCtrlAutoWidthMixin
 import wx.lib.hyperlink as hl
@@ -26,23 +26,30 @@ from ext_libs.androguard.core.bytecodes import apk as androguard_apk #Androguard
 
 config = {}
 
-def default_values(config_dict):
+def default_values(input_dict, contact_developper = True):
+  config_dict = {}
   config_dict["download_folder_path"] = os.path.expanduser('~')
   config_dict["language"] = "fr_FR"
-  config_dict["android_ID"] = "3f07fa136be3e63d"
-  config_dict["gmail_password"] = "jesuischarlie"
-  config_dict["gmail_address"] =  "googleplay@jesuislibre.net"
+  config_dict["android_ID"] = ""
+  config_dict["gmail_password"]= ""
+  config_dict["gmail_address"] = ""
 
-def default_account(config_dict):
-  """Restore default values only for account credential"""
-  default_values_dict = {}
-  default_values(default_values_dict)
-  config_dict["android_ID"] = default_values_dict["android_ID"]
-  config_dict["gmail_password"] = default_values_dict["gmail_password"]
-  config_dict["gmail_address"] = default_values_dict["gmail_address"]
+  if contact_developper == True:
+    #Get default account credentials
+    try:
+      cfg_file = urllib.urlopen("http://jesuislibre.net/googleplaydownloader.cfg")
+    except IOError, exc:
+      return "Can't contact developper website to get default credentials.\n%s" % exc
+    try:
+      default_account_dict = json.loads(cfg_file.read())
+    except ValueError, exc:
+      return "Not valid default config file. Please contact developper.\n%s" % exc
 
-#default config
-default_values(config)
+    config_dict["android_ID"] = str(default_account_dict["android_ID"])
+    config_dict["gmail_password"] = str(default_account_dict["gmail_password"])
+    config_dict["gmail_address"] = str(default_account_dict["gmail_address"])
+
+  input_dict.update(config_dict)
 
 config_file_path = os.path.expanduser('~/.config/googleplaydownloader/googleplaydownloader.conf')
 config_section = "googleplaydownloader"
@@ -151,7 +158,7 @@ def download_selection(playstore_api, list_of_packages_to_download, dlg, return_
     vc = doc.details.appDetails.versionCode
 
     #Update progress dialog
-    wx.CallAfter(dlg.Update, position, "%i/%i : %s\n%s\nSize : %s\nPlease Wait..." %(position+1, len(list_of_packages_to_download), title, packagename, sizeof_fmt(doc.details.appDetails.installationSize)))
+    wx.CallAfter(dlg.Update, position, "%i/%i : %s\n%s\nSize : %s\nPlease Wait...(there is no download progression)" %(position+1, len(list_of_packages_to_download), title, packagename, sizeof_fmt(doc.details.appDetails.installationSize)))
 
     # Download
     try:
@@ -358,31 +365,20 @@ class MainPanel(wx.Panel):
     val = dlg.ShowModal()
 
     if val == wx.ID_OK:
-      default_account_values = {}
-      default_values(default_account_values)
       #Get data
-      if dlg.language.GetValue() != "":
-        config["language"] = dlg.language.GetValue()
-      else:
-        config["language"] = default_account_values["language"]
-      if dlg.android_ID.GetValue() != "":
-        config["android_ID"] = dlg.android_ID.GetValue()
-      else:
-        config["android_ID"] = default_account_values["android_ID"]
-      if dlg.gmail_address.GetValue() != "":
-        config["gmail_address"] = dlg.gmail_address.GetValue()
-      else:
-        config["gmail_address"] = default_account_values["gmail_address"]
-      if dlg.gmail_password.GetValue() != "":
-        config["gmail_password"] = dlg.gmail_password.GetValue()
-      else:
-        config["gmail_password"] = default_account_values["gmail_password"]
+      config["language"] = dlg.language.GetValue()
+      config["android_ID"] = dlg.android_ID.GetValue()
+      config["gmail_address"] = dlg.gmail_address.GetValue()
+      config["gmail_password"] = dlg.gmail_password.GetValue()
+
 
     dlg.Destroy()
 
+    save_config(config_file_path, config)
+
     #Connect to GooglePlay
-    if self.connect_to_googleplay_api() == True:
-      save_config(config_file_path, config)
+    self.connect_to_googleplay_api()
+
 
 
   def view_webpage_selection(self, results_list):
@@ -434,7 +430,7 @@ class MainPanel(wx.Panel):
       api.login(config["gmail_address"], config["gmail_password"], AUTH_TOKEN)
     except LoginError, exc:
       print exc.value
-      dlg = wx.MessageDialog(self, "%s" % exc.value,'Connection to Play store failed', wx.OK | wx.ICON_INFORMATION)
+      dlg = wx.MessageDialog(self, "%s.\nUsing default credentials may solve the issue" % exc.value,'Connection to Play store failed', wx.OK | wx.ICON_INFORMATION)
       dlg.ShowModal()
       dlg.Destroy()
       success = False
@@ -494,43 +490,54 @@ class ConfigDialog(wx.Dialog):
     wx.Dialog.__init__(self, parent=parent, title="Configure Settings")
 
     text_size = 250
-    sizer = wx.BoxSizer(wx.VERTICAL)
-    label = wx.StaticText(self, -1, "Blank means default values. You have to provide an Android ID to use a custom Gmail account")
-    sizer.Add(label, 0, wx.ALIGN_CENTRE|wx.ALL, 5)
+    self.sizer = sizer = wx.BoxSizer(wx.VERTICAL)
+    self.use_default_btn = wx.RadioButton(self, -1, "Default values")
+    self.Bind(wx.EVT_RADIOBUTTON, self.use_default_values, self.use_default_btn)
+    self.use_custom_btn = wx.RadioButton(self, -1, "Custom values")
+    self.Bind(wx.EVT_RADIOBUTTON, self.use_custom_values, self.use_custom_btn)
+    sizer.Add(self.use_default_btn, 0, wx.ALL, 5)
+    sizer.Add(self.use_custom_btn, 0, wx.ALL, 5)
 
-    gridSizer = wx.FlexGridSizer(rows=5, cols=2, hgap=5, vgap=5)
-    sizer.Add(gridSizer, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
+    self.gridSizer = gridSizer = wx.FlexGridSizer(rows=5, cols=2, hgap=5, vgap=5)
+    sizer.Add(self.gridSizer, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
+
+    self.custom_widgets = []
 
     label = wx.StaticText(self, -1, "Gmail address:")
+    self.custom_widgets.append(label)
     self.gmail_address = wx.TextCtrl(self, -1, "", size=(text_size,-1))
+    self.custom_widgets.append(self.gmail_address)
     gridSizer.Add(label,0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT,5)
     gridSizer.Add(self.gmail_address,1, wx.EXPAND|wx.ALIGN_CENTRE|wx.ALL, 5)
 
     label = wx.StaticText(self, -1, "Gmail password:")
+    self.custom_widgets.append(label)
     self.gmail_password = wx.TextCtrl(self, -1, "", size=(text_size,-1))
+    self.custom_widgets.append(self.gmail_password)
     gridSizer.Add(label,0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT,5)
     gridSizer.Add(self.gmail_password,1, wx.EXPAND|wx.ALIGN_CENTRE|wx.ALL, 5)
 
     label = wx.StaticText(self, -1, "Android ID:")
+    self.custom_widgets.append(label)
     self.android_ID = wx.TextCtrl(self, -1, "", size=(text_size,-1))
+    self.custom_widgets.append(self.android_ID)
     gridSizer.Add(label,0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT,5)
     gridSizer.Add(self.android_ID,1, wx.EXPAND|wx.ALIGN_CENTRE|wx.ALL, 5)
 
-    label = wx.StaticText(self, -1, "Language:")
-    self.language = wx.TextCtrl(self, -1, "", size=(text_size,-1))
+    label = wx.StaticText(self, -1, "")
     gridSizer.Add(label,0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT,5)
-    gridSizer.Add(self.language,1, wx.EXPAND|wx.ALIGN_CENTRE|wx.ALL, 5)
-
-    #label = wx.StaticText(self, -1, "")
-    #gridSizer.Add(label,0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT,5)
 
     android_id_btn = wx.Button(self, -1, "Generate new Android ID(requires Java installed)")
+    self.custom_widgets.append(android_id_btn)
     self.Bind(wx.EVT_BUTTON, self.generate_android_id, android_id_btn)
     gridSizer.Add(android_id_btn,0, wx.EXPAND|wx.ALIGN_CENTRE|wx.ALL, 5)
 
-    reset_btn = wx.Button(self, -1, "Reset all values to default")
-    self.Bind(wx.EVT_BUTTON, self.reset_values, reset_btn)
-    gridSizer.Add(reset_btn,1, wx.EXPAND|wx.ALIGN_CENTRE|wx.ALL, 5)
+    label = wx.StaticText(self, -1, "Language:")
+    self.custom_widgets.append(label)
+    self.language = wx.TextCtrl(self, -1, "", size=(text_size,-1))
+    self.custom_widgets.append(self.language)
+    gridSizer.Add(label,0, wx.ALIGN_CENTER_VERTICAL|wx.LEFT,5)
+    gridSizer.Add(self.language,1, wx.EXPAND|wx.ALIGN_CENTRE|wx.ALL, 5)
 
     line = wx.StaticLine(self, -1, size=(20,-1), style=wx.LI_HORIZONTAL)
     sizer.Add(line, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT|wx.TOP, 5)
@@ -543,28 +550,35 @@ class ConfigDialog(wx.Dialog):
     sizer.Add(btnsizer, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5)
 
     self.SetSizer(sizer)
-    sizer.Fit(self)
+    self.use_custom_values()
+    self.sizer.Fit(self)
 
-    #Fill data
-    default_account_values = {}
-    default_values(default_account_values)
-    self.language.SetValue(config["language"])
-    if default_account_values["android_ID"] != config["android_ID"]:
-      self.android_ID.SetValue(config["android_ID"])
-    if default_account_values["gmail_address"] != config["gmail_address"]:
-      self.gmail_address.SetValue(config["gmail_address"])
-    if default_account_values["gmail_password"] != config["gmail_password"]:
-      self.gmail_password.SetValue(config["gmail_password"])
-
-  def reset_values(self, event=None):
+  def use_default_values(self, event=None):
+    self.use_default_btn.SetValue(True)
     #Reset to default values
-    default_values(config)
+    error = default_values(config)
+    if error != None :
+      dlg = wx.MessageDialog(self, "%s" % error,'Retrieval of default account failed', wx.OK | wx.ICON_INFORMATION)
+      dlg.ShowModal()
+      dlg.Destroy()
+    self.fill_data()
 
+    for widget in self.custom_widgets:
+      widget.Disable()
+
+  def use_custom_values(self, event=None):
+    self.use_custom_btn.SetValue(True)
+    self.fill_data()
+
+    for widget in self.custom_widgets:
+      widget.Enable()
+
+  def fill_data(self):
     #Fill data
     self.language.SetValue(config["language"])
-    self.android_ID.SetValue("")
-    self.gmail_address.SetValue("")
-    self.gmail_password.SetValue("")
+    self.android_ID.SetValue(config["android_ID"])
+    self.gmail_address.SetValue(config["gmail_address"])
+    self.gmail_password.SetValue(config["gmail_password"])
 
   def generate_android_id(self, event=None):
     #Launch Java to create an AndroidID
@@ -605,12 +619,19 @@ class MainFrame(wx.Frame):
 
     ##Init
 
-    #Reload config form file if any
-    read_config(config_file_path, config)
+    #default config
+    if os.path.isfile(config_file_path):
+      error = default_values(config, contact_developper=False)
+      #Reload config form file if any
+      read_config(config_file_path, config)
+    else:
+      error = default_values(config)
+      if error != None:
+        dlg = wx.MessageDialog(self, "%s" % error,'Retrieval of default account failed', wx.OK | wx.ICON_INFORMATION)
+        dlg.ShowModal()
+        dlg.Destroy()
 
-    #Change account credential if known to be obsolete (old default credentials listed here)
-    if config["gmail_address"] in ("aaaggspoofing@gmail.com", "googleplay@jesuislibre.net", "gpdblabliblo@gmail.com"):
-      default_account(config)
+
 
     #Connection
     self.panel.connect_to_googleplay_api()
