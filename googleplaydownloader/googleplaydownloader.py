@@ -34,22 +34,28 @@ def default_values(input_dict, contact_developper = True):
   config_dict["gmail_password"]= ""
   config_dict["gmail_address"] = ""
 
+  error = None
   if contact_developper == True:
     #Get default account credentials
     try:
       cfg_file = urllib.urlopen("http://jesuislibre.net/googleplaydownloader.cfg")
     except IOError, exc:
-      return "Can't contact developper website to get default credentials.\n%s" % exc
-    try:
-      default_account_dict = json.loads(cfg_file.read())
-    except ValueError, exc:
-      return "Not valid default config file. Please contact developper.\n%s" % exc
+      error = "Can't contact developper website to get valid credentials.\n\nDefault credential will be used instead. They can be expired."
+      #Fallback to maybe values deprecated values
+      default_account_dict = {"gmail_password": "jesuischarlie1", "android_ID": "357a593af541dac8", "gmail_address": "googleplay@jesuislibre.net"}
+    else:
+      try:
+        default_account_dict = json.loads(cfg_file.read())
+      except ValueError, exc:
+        error = "Not valid default config file. Please contact developper.\n%s" % exc
 
     config_dict["android_ID"] = str(default_account_dict["android_ID"])
     config_dict["gmail_password"] = str(default_account_dict["gmail_password"])
     config_dict["gmail_address"] = str(default_account_dict["gmail_address"])
 
   input_dict.update(config_dict)
+
+  return error
 
 config_file_path = os.path.expanduser('~/.config/googleplaydownloader/googleplaydownloader.conf')
 config_section = "googleplaydownloader"
