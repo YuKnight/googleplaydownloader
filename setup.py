@@ -30,8 +30,6 @@ setup(
 	author_email="debian@jesuislibre.net",
 	url="http://codingteam.net/project/googleplaydownloader",
 	license="AGPL",
-	#packages=['googleplaydownloader', 'googleplaydownloader.ext_libs','googleplaydownloader.ext_libs.androguard', 'googleplaydownloader.ext_libs.androguard.core', 'googleplaydownloader.ext_libs.androguard.core', 'googleplaydownloader.ext_libs.androguard.core.bytecodes', 'googleplaydownloader.ext_libs.androguard.core.bytecodes.libdvm', 'googleplaydownloader.ext_libs.googleplay_api', 'googleplaydownloader.ext_libs.android-checkin' ],
-	#package_dir={'googleplaydownloader' : 'src'},
   packages=find_packages(),
   entry_points={'gui_scripts': ['googleplaydownloader = googleplaydownloader:start_gui'], },
   install_requires=[
@@ -41,5 +39,5 @@ setup(
     'pyasn1',
     'configparser',
   ],
-	package_data={'googleplaydownloader': ["version.txt", 'img/icon.ico'], 'googleplaydownloader.ext_libs.android-checkin' : ["target/android-checkin-1.1-jar-with-dependencies.jar"]}
+	package_data={'googleplaydownloader': ["version.txt", 'img/icon.ico', "ext_libs/android-checkin/target/android-checkin-1.1-jar-with-dependencies.jar"]}
 	)
