@@ -206,7 +206,7 @@ class MainPanel(wx.Panel):
     #Search
     search_title = wx.StaticText(self, -1, u"Search :")
     search_entry = wx.SearchCtrl(self, -1, style=wx.TE_PROCESS_ENTER)
-    search_entry.SetDescriptiveText(u"Search")
+    #search_entry.SetDescriptiveText(u"Search")
     self.Bind(wx.EVT_TEXT_ENTER, lambda e: self.search(results_list, search_entry.GetValue(), nb_results=20), search_entry)
 
     #Search Layout
