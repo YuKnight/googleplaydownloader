@@ -124,7 +124,10 @@ def analyse_local_apks(list_of_apks, playstore_api, download_folder_path, dlg, r
     #Get APK info from file on disk
     filepath = os.path.join(download_folder_path, filename)
     a = androguard_apk.APK(filepath)
-    apk_version_code = a.get_androidversion_code()
+    try:
+      apk_version_code = a.get_androidversion_code()
+    except KeyError :
+      apk_version_code = "0"
     packagename = a.get_package()
 
     #Get APK info from store
