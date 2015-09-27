@@ -44,7 +44,7 @@ class GooglePlayAPI(object):
     ACCOUNT_TYPE_HOSTED_OR_GOOGLE = "HOSTED_OR_GOOGLE"
     authSubToken = None
 
-    sdk_version = 22
+    sdk_version = 23
 
     def __init__(self, androidId=None, lang=None, debug=False): # you must use a device-associated androidId value
         self.preFetch = {}

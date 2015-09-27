@@ -35,7 +35,7 @@ public class Checkin {
     private final String email;
     private final String password;
 
-    private int sdk_version = 22;
+    private int sdk_version = 23;
 
     private String token;
     public String getToken() { return this.token; }
