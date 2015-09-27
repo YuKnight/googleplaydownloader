@@ -1,3 +1,10 @@
+googleplaydownloader (1.8-1) unstable; urgency=low
+
+  * Update to sdk 23 (Android 6.0)
+  * Fix a few bugs
+
+ -- Tuxicoman <debian@jesuislibre.net>  Sun, 27 Sep 2015 17:28:13 +0200
+
 googleplaydownloader (1.7-1) unstable; urgency=low
 
   * Get default credentials from developper website
