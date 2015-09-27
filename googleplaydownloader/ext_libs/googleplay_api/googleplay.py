@@ -44,6 +44,8 @@ class GooglePlayAPI(object):
     ACCOUNT_TYPE_HOSTED_OR_GOOGLE = "HOSTED_OR_GOOGLE"
     authSubToken = None
 
+    sdk_version = 22
+
     def __init__(self, androidId=None, lang=None, debug=False): # you must use a device-associated androidId value
         self.preFetch = {}
         if androidId == None:
@@ -118,7 +120,7 @@ class GooglePlayAPI(object):
                                 "device_country": "fr",
                                 "operatorCountry": "fr",
                                 "lang": "fr",
-                                "sdk_version": "19"}
+                                "sdk_version": "%i" % self.sdk_version}
             headers = {
                 "Accept-Encoding": "",
             }
@@ -147,7 +149,7 @@ class GooglePlayAPI(object):
                                     "X-DFE-Device-Id": self.androidId,
                                     "X-DFE-Client-Id": "am-android-google",
                                     #"X-DFE-Logging-Id": self.loggingId2, # Deprecated?
-                                    "User-Agent": "Android-Finsky/4.4.3 (api=3,versionCode=8013013,sdk=19,device=hammerhead,hardware=hammerhead,product=hammerhead)",
+                                    "User-Agent": "Android-Finsky/5.1.1 (api=3,versionCode=8013013,sdk=%i,device=shamu,hardware=hammerhead,product=hammerhead)" % self.sdk_version,
                                     "X-DFE-SmallestScreenWidthDp": "335",
                                     "X-DFE-Filter-Level": "3",
                                     "Accept-Encoding": "",
@@ -271,7 +273,7 @@ class GooglePlayAPI(object):
         }
 
         headers = {
-                   "User-Agent" : "AndroidDownloadManager/4.4.3 (Linux; U; Android 4.4.3; Nexus S Build/JRO03E)",
+                   "User-Agent" : "AndroidDownloadManager/5.1.1 (Linux; U; Android 5.1.1; Nexus 5 Build/KOT49H)",
                    "Accept-Encoding": "",
                   }
 

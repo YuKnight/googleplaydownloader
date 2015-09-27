@@ -35,6 +35,8 @@ public class Checkin {
     private final String email;
     private final String password;
 
+    private int sdk_version = 22;
+
     private String token;
     public String getToken() { return this.token; }
 
@@ -72,7 +74,7 @@ public class Checkin {
         data.add(new BasicNameValuePair("app",            "com.google.android.gsf"));
         data.add(new BasicNameValuePair("client_sig",     "61ed377e85d386a8dfee6b864bd85b0bfaa5af81"));
         data.add(new BasicNameValuePair("lang",           "en"));
-        data.add(new BasicNameValuePair("sdk_version",    "19"));
+        data.add(new BasicNameValuePair("sdk_version",    Integer.toString(this.sdk_version)));
 
         this.authGsf = postFormFetchValue("https://android.clients.google.com/auth", data, "Auth");
     }
@@ -169,16 +171,16 @@ public class Checkin {
             .setDigest("1-929a0dca0eee55513280171a8585da7dcd3700f8")
             .setCheckin(AndroidCheckinProto.newBuilder()
                 .setBuild(AndroidBuildProto.newBuilder()
-                    .setId("samsung/m0xx/m0:4.3/JSS15J/I9300XXUGNA7:user/release-keys")
+                    .setId("samsung/m0xx/m0:5.1/JSS15J/I9300XXUGNA7:user/release-keys")
                     .setProduct("m0xx")
                     .setCarrier("Google")
                     .setRadio("I9250XXLA2")
                     .setBootloader("I9300XXALEF")
                     .setClient("android-google")
                     .setTimestamp(new Date().getTime()/1000)
-                    .setGoogleServices(19)
+                    .setGoogleServices(this.sdk_version)
                     .setDevice("m0")
-                    .setSdkVersion(19)
+                    .setSdkVersion(this.sdk_version)
                     .setModel("GT-I9300")
                     .setManufacturer("Samsung")
                     .setBuildProduct("m0xx")
@@ -359,7 +361,7 @@ public class Checkin {
         request.setHeader("Content-type", "application/x-protobuffer");
         request.setHeader("Content-Encoding", "gzip");
         request.setHeader("Accept-Encoding", "gzip");
-        request.setHeader("User-Agent", "Android-Checkin/2.0 (maguro JRO03L); gzip");
+        request.setHeader("User-Agent", "Android-Checkin/5.1 (maguro JRO03L); gzip");
 
         request.setEntity(new ByteArrayEntity(generateCheckinPayload()));
 
