@@ -14,7 +14,9 @@ public class Main {
             }
             String email = args[0];
             String password = args[1];
-            new Checkin(email, password).checkin();
+
+            String gsfId = new Checkin(email, password).checkin();
+            System.out.println("GSF_ID: " + gsfId);
         } catch (Exception e) {
             e.printStackTrace();
         }
