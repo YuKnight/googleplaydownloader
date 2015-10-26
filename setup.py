@@ -39,5 +39,5 @@ setup(
     'pyasn1',
     'configparser',
   ],
-	package_data={'googleplaydownloader': ["version.txt", 'img/icon.ico', "ext_libs/android-checkin/target/android-checkin-1.1-jar-with-dependencies.jar"]}
+	package_data={'googleplaydownloader': ["version.txt", 'img/icon.ico', "ext_libs/android-checkin/target/android-checkin-jb-jar-with-dependencies.jar"]}
 	)

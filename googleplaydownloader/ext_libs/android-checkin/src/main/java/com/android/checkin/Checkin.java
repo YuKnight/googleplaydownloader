@@ -62,6 +62,8 @@ public class Checkin {
 
     private long securityToken;
 
+    private int sdk_version = 23;
+
     public Checkin(String email, String password) {
         this.email = email;
         this.password = password;
@@ -96,10 +98,10 @@ public class Checkin {
         data.add(new BasicNameValuePair("app",            "com.google.android.gsf"));
         data.add(new BasicNameValuePair("androidId",      this.gsfId));
         data.add(new BasicNameValuePair("client_sig",     "38918a453d07199354f8b19af05ec6562ced5788"));
-        data.add(new BasicNameValuePair("lang",           "en"));
-        data.add(new BasicNameValuePair("device_country", "us"));
-        data.add(new BasicNameValuePair("operatorCountry","us"));
-        data.add(new BasicNameValuePair("sdk_version",    "19"));
+        data.add(new BasicNameValuePair("lang",           "fr"));
+        data.add(new BasicNameValuePair("device_country", "fr"));
+        data.add(new BasicNameValuePair("operatorCountry","fr"));
+        data.add(new BasicNameValuePair("sdk_version",    Integer.toString(this.sdk_version)));
 
         this.LSID = postFormFetchValue("https://android.clients.google.com/auth", data, "LSID");
     }
@@ -201,7 +203,7 @@ public class Checkin {
 			    .setClient("android-google")
 			    .setTimestamp(new Date().getTime()/1000)
 			    .setDevice("ghost")
-			    .setSdkVersion(19)
+			    .setSdkVersion(this.sdk_version)
 			    .setModel("XT1060")
 			    .setManufacturer("motorola")
 			    .setBuildProduct("ghost_verizon")
@@ -400,7 +402,7 @@ public class Checkin {
 			    .setClient("android-google")
 			    .setTimestamp(new Date().getTime()/1000)
 			    .setDevice("ghost")
-			    .setSdkVersion(19)
+			    .setSdkVersion(this.sdk_version)
 			    .setModel("XT1060")
 			    .setManufacturer("motorola")
 			    .setBuildProduct("ghost_verizon")
